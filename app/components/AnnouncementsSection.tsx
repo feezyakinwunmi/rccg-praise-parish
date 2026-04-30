@@ -57,48 +57,64 @@ export default function EventsSection() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
   const [activeTab, setActiveTab] = useState<"upcoming" | "past">("upcoming");
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const [slidesToShow, setSlidesToShow] = useState(1);
 
   const upcomingEvents = events.filter(event => event.type === "upcoming");
   const pastEvents = events.filter(event => event.type === "past");
   
   const displayedEvents = activeTab === "upcoming" ? upcomingEvents : pastEvents;
+  
+  // Calculate total number of slides (each individual card is a slide)
+  const totalSlides = displayedEvents.length;
+  
+  // Calculate max slide index
+  const maxSlide = Math.max(0, totalSlides - slidesToShow);
 
   useEffect(() => {
     const handleResize = () => {
+      let newSlidesToShow = 1;
       if (window.innerWidth >= 1024) {
-        setSlidesToShow(3);
+        newSlidesToShow = 3;
       } else if (window.innerWidth >= 768) {
-        setSlidesToShow(2);
+        newSlidesToShow = 2;
       } else {
-        setSlidesToShow(1);
+        newSlidesToShow = 1;
       }
+      setSlidesToShow(newSlidesToShow);
+      // Reset current slide when responsive breakpoint changes
+      setCurrentSlide(0);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const nextSlide = () => {
-    setCurrentIndex((prev) => 
-      prev + slidesToShow >= displayedEvents.length ? 0 : prev + 1
-    );
-  };
-
-  const prevSlide = () => {
-    setCurrentIndex((prev) => 
-      prev === 0 ? Math.max(0, displayedEvents.length - slidesToShow) : prev - 1
-    );
-  };
-
+  // Reset when tab changes
   useEffect(() => {
-    setCurrentIndex(0);
+    setCurrentSlide(0);
   }, [activeTab]);
+
+  // Move to next slide (one by one)
+  const nextSlide = () => {
+    if (currentSlide + 1 <= maxSlide) {
+      setCurrentSlide(currentSlide + 1);
+    }
+  };
+
+  // Move to previous slide (one by one)
+  const prevSlide = () => {
+    if (currentSlide - 1 >= 0) {
+      setCurrentSlide(currentSlide - 1);
+    }
+  };
 
   const openEventsPage = () => {
     window.open("/events", "_blank");
   };
+
+  // Calculate transform percentage - each slide is 100% / slidesToShow of the visible area
+  const transformPercent = (currentSlide / totalSlides) * 100;
 
   return (
     <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-gray-50 to-blue-50" id="events">
@@ -154,13 +170,16 @@ export default function EventsSection() {
             <div className="relative">
               <div className="overflow-hidden">
                 <motion.div
-                  animate={{ x: `-${currentIndex * (100 / slidesToShow)}%` }}
-                  transition={{ duration: 0.5 }}
+                  animate={{ x: `-${currentSlide * (100 / slidesToShow)}%` }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
                   className="flex"
-                  style={{ width: `${(displayedEvents.length * 100) / slidesToShow}%` }}
                 >
                   {displayedEvents.map((event, index) => (
-                    <div key={event.id} className="px-3 sm:px-4" style={{ width: `${100 / displayedEvents.length}%` }}>
+                    <div 
+                      key={event.id} 
+                      className="px-3 sm:px-4 flex-shrink-0"
+                      style={{ width: `${100 / slidesToShow}%` }}
+                    >
                       <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -229,17 +248,24 @@ export default function EventsSection() {
                 </motion.div>
               </div>
 
-              {slidesToShow < displayedEvents.length && (
+              {/* Navigation Buttons */}
+              {displayedEvents.length > slidesToShow && (
                 <>
                   <button
                     onClick={prevSlide}
-                    className="absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition -ml-2 sm:-ml-4 z-10"
+                    disabled={currentSlide === 0}
+                    className={`absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition -ml-2 sm:-ml-4 z-10 ${
+                      currentSlide === 0 ? "opacity-50 cursor-not-allowed" : "hover:scale-110"
+                    }`}
                   >
                     <ChevronLeft size={20} className="sm:w-5 sm:h-5 text-blue-600" />
                   </button>
                   <button
                     onClick={nextSlide}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition -mr-2 sm:-mr-4 z-10"
+                    disabled={currentSlide >= maxSlide}
+                    className={`absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition -mr-2 sm:-mr-4 z-10 ${
+                      currentSlide >= maxSlide ? "opacity-50 cursor-not-allowed" : "hover:scale-110"
+                    }`}
                   >
                     <ChevronRight size={20} className="sm:w-5 sm:h-5 text-blue-600" />
                   </button>
@@ -257,14 +283,15 @@ export default function EventsSection() {
           )}
         </div>
 
-        {displayedEvents.length > 0 && (
+        {/* Dots Indicator */}
+        {displayedEvents.length > slidesToShow && (
           <div className="flex justify-center space-x-2 mt-6 sm:mt-8">
-            {Array.from({ length: Math.ceil(displayedEvents.length / slidesToShow) }).map((_, index) => (
+            {Array.from({ length: totalSlides - slidesToShow + 1 }).map((_, index) => (
               <button
                 key={index}
-                onClick={() => setCurrentIndex(index * slidesToShow)}
+                onClick={() => setCurrentSlide(index)}
                 className={`h-2 rounded-full transition-all ${
-                  Math.floor(currentIndex / slidesToShow) === index ? "w-6 sm:w-8 bg-blue-600" : "w-2 bg-gray-300"
+                  currentSlide === index ? "w-6 sm:w-8 bg-blue-600" : "w-2 bg-gray-300"
                 }`}
               />
             ))}
