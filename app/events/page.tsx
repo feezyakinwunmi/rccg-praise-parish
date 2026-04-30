@@ -25,7 +25,7 @@ const allEvents: Event[] = [
     date: "Saturday, May 16, 2026",
     description: "A powerful women's conference tagged 'SOARING HIGHER IN CHRIST'. Join us for a day of worship, empowerment, and divine encounters.",
     detailedInfo: "Come and experience a transformative day as we gather to worship, learn, and grow together. Speakers include ministers from across Lagos Province. Special music ministration, breakout sessions, and prayer time. Registration is free but required for planning.",
-    image: "/mp1.jpg",
+    image: "/sh.jpeg",
     type: "upcoming",
     icon: Users,
     location: "RCCG The Praise Parish, Ora Estate, Epe",
