@@ -28,15 +28,17 @@ export default function LoadingScreen() {
             transition={{ duration: 0.8, type: "spring" }}
             className="text-center px-4"
           >
-            <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 mx-auto mb-4 bg-white rounded-full flex items-center justify-center shadow-2xl">
+            <div className="w-24 h-24  gap-1 sm:w-28 sm:h-28 md:w-32 md:h-32 mx-auto mb-4 bg-white rounded-full flex items-center justify-center shadow-2xl">
+              <span className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <img src="/rl.jpeg" alt="RCCG Logo" className="w-10 rounded-full h-10 sm:w-12 sm:h-12" />
+              </span>
               <span className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 <img src="/tpplogo.jpg" alt="RCCG Logo" className="w-10 h-10 sm:w-12 sm:h-12" />
               </span>
             </div>
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-2">RCCG</h1>
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-2">Redeem Christian <br/>Church of God</h1>
             <p className="text-sm sm:text-base text-blue-200">The Praise Parish</p>
-                        <p className="text-sm sm:text-base text-blue-200">The Favoured Family </p>
-                                    <p className="text-sm sm:text-base text-blue-200">Lagos Province 132</p>
+                        <p className="text-sm sm:text-base text-blue-200">The Favoured Family, Lagos Province 132 </p>
 
 
             <motion.div

@@ -65,9 +65,12 @@ export default function Navbar() {
             <div className="flex justify-between items-center h-16 sm:h-20">
               {/* Logo with Link */}
               <a href="/" className="flex items-center space-x-2 sm:space-x-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-full flex items-center justify-center shadow-md">
+                <div className="w-20 h-8  gap-2 sm:w-20 sm:h-10 rounded-full flex items-center justify-center shadow-md">
                   <span className="text-lg sm:text-xl text-purple-900/90">
-                  <img src="/tpplogo.jpg" alt="RCCG Logo" className="w-5 h-5 sm:w-6 sm:h-6" />
+                  <img src="/rl.jpeg" alt="RCCG Logo" className="w-5 h-5 rounded-full sm:w-6 sm:h-6" />
+                  </span>
+                  <span className="text-lg sm:text-xl text-purple-900/90">
+                  <img src="/tpplogo.jpg" alt="RCCG Logo" className="w-5 h-5 rounded-full sm:w-6 sm:h-6" />
                   </span>
                 </div>
                 <div>
