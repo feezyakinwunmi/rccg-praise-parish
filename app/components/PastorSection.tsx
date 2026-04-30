@@ -131,9 +131,8 @@ export default function PastorSection() {
             >
               <Link
                 href="/about"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold hover:shadow-xl transition-all duration-300 text-sm sm:text-base relative overflow-hidden group"
               >
-              <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold hover:shadow-xl transition-all duration-300 text-sm sm:text-base relative overflow-hidden group">
+              <button className="bg-blue-600 text-white px-6 sm:px-8 py-2.5 sm:py-3 rounded-full font-semibold hover:shadow-xl transition-all duration-300 text-sm sm:text-base relative overflow-hidden group">
                 <span className="relative z-10">Read About →</span>
                 <motion.div 
                   className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"

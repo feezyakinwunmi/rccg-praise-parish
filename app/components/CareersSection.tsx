@@ -75,7 +75,7 @@ export default function CareersSection() {
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             Build Your Future With Us
           </h2>
-          <div className="w-20 h-1 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto" />
+          <div className="w-20 h-1 bg-blue-600 mx-auto" />
           <p className="text-gray-600 mt-4 text-sm sm:text-base max-w-2xl mx-auto px-4">
             Gain valuable skills and knowledge in high-demand fields. Start your journey to a brighter future today.
           </p>
@@ -139,7 +139,7 @@ export default function CareersSection() {
         >
           <button
             onClick={openJoinPage}
-            className="group bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 sm:px-10 md:px-12 py-3 sm:py-4 rounded-full font-semibold hover:shadow-2xl transition-all transform hover:scale-105 inline-flex items-center gap-2 text-sm sm:text-base"
+            className="group bg-blue-600 text-white px-8 sm:px-10 md:px-12 py-3 sm:py-4 rounded-full font-semibold hover:shadow-2xl transition-all transform hover:scale-105 inline-flex items-center gap-2 text-sm sm:text-base"
           >
             <span>View More Programs</span>
             <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />

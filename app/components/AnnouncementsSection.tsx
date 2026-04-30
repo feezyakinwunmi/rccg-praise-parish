@@ -23,7 +23,7 @@ const events: Event[] = [
     title: "Lagos Province 132 Women of Grace Conference",
     date: "Saturday, May 16, 2026",
     description: "A powerful women's conference tagged 'SOARING HIGHER IN CHRIST'. Join us for a day of worship, empowerment, and divine encounters.",
-    image: "/mp1.jpg",
+    image: "/sh.jpeg",
     type: "upcoming",
     icon: Users,
     location: "RCCG The Praise Parish, Ora Estate, Epe",
@@ -43,7 +43,7 @@ const events: Event[] = [
   {
     id: "3",
     title: "The EPE PRAISE EXPERIENCE",
-    date: "December 15, 2024",
+    date: "April 19, 2026",
     description: "A night of praise and worship with Pastor Nathaniel Bassey. An unforgettable experience of God's presence through music and worship.",
     image: "/epe1.jpg",
     type: "past",
@@ -131,7 +131,7 @@ export default function EventsSection() {
             <span className="text-sm font-semibold text-blue-600">Church Events</span>
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">Events & Programs</h2>
-          <div className="w-20 h-1 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto" />
+          <div className="w-20 h-1 bg-blue-600 mx-auto" />
           <p className="text-gray-600 mt-4 text-sm sm:text-base max-w-2xl mx-auto">
             Join us for life-changing events and powerful worship experiences
           </p>
@@ -147,7 +147,7 @@ export default function EventsSection() {
             onClick={() => setActiveTab("upcoming")}
             className={`px-6 sm:px-8 py-2.5 rounded-full font-semibold transition-all duration-300 ${
               activeTab === "upcoming"
-                ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105"
+                ? "bg-blue-600 text-white shadow-lg scale-105"
                 : "bg-white text-gray-600 hover:bg-gray-100"
             }`}
           >
@@ -157,7 +157,7 @@ export default function EventsSection() {
             onClick={() => setActiveTab("past")}
             className={`px-6 sm:px-8 py-2.5 rounded-full font-semibold transition-all duration-300 ${
               activeTab === "past"
-                ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105"
+                ? "bg-blue-600 text-white shadow-lg scale-105"
                 : "bg-white text-gray-600 hover:bg-gray-100"
             }`}
           >
@@ -236,7 +236,7 @@ export default function EventsSection() {
                           
                           <button
                             onClick={openEventsPage}
-                            className="w-full mt-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full font-semibold hover:shadow-lg transition-all transform hover:scale-105 text-sm flex items-center justify-center gap-2"
+                            className="w-full mt-2 bg-blue-600 text-white px-4 py-2 rounded-full font-semibold hover:shadow-lg transition-all transform hover:scale-105 text-sm flex items-center justify-center gap-2"
                           >
                             <span>View Full Details</span>
                             <ChevronRight className="w-4 h-4" />

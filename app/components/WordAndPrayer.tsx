@@ -43,9 +43,9 @@ export default function WordAndPrayer() {
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
               Word for the Month & 
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600"> Prayer Focus</span>
+              <span className="text-transparent bg-clip-text bg-blue-600"> Prayer Focus</span>
             </h2>
-            <div className="w-20 h-1 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto" />
+            <div className="w-20 h-1 bg-blue-600 mx-auto" />
           </motion.div>
 
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-stretch">
@@ -110,7 +110,7 @@ export default function WordAndPrayer() {
               className="bg-white rounded-2xl shadow-xl overflow-hidden"
             >
               {/* Header */}
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6">
+              <div className="bg-blue-600 p-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <Heart className="w-8 h-8 text-white mb-2" />
@@ -140,7 +140,7 @@ export default function WordAndPrayer() {
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-2">
-                            <span className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white text-xs font-bold">
+                            <span className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">
                               {index + 1}
                             </span>
                             <h4 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
@@ -182,7 +182,7 @@ export default function WordAndPrayer() {
             className="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 sticky top-0">
+            <div className="bg-blue-600 p-6 sticky top-0">
               <div className="flex items-center justify-between">
                 <h3 className="text-2xl font-bold text-white">{selectedPrayer.title}</h3>
                 <button

@@ -80,7 +80,7 @@ export default function ServicesSection() {
               className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 leading-tight"
             >
               Experience God's Presence
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+              <span className="block text-transparent bg-clip-text bg-blue-600">
                 In Every Service
               </span>
             </motion.h2>
@@ -129,7 +129,7 @@ export default function ServicesSection() {
               transition={{ delay: 0.5, duration: 0.5 }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="group bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 sm:px-8 py-3 rounded-full font-semibold hover:shadow-xl transition-all duration-300 inline-flex items-center gap-2"
+              className="group bg-blue-600 text-white px-6 sm:px-8 py-3 rounded-full font-semibold hover:shadow-xl transition-all duration-300 inline-flex items-center gap-2"
             >
               View Full Schedule
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
