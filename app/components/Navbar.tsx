@@ -74,7 +74,7 @@ export default function Navbar() {
                   <h1 className={`font-bold text-sm sm:text-base md:text-lg ${isScrolled ? "text-gray-900" : "text-white"}`}>
                     RCCG
                   </h1>
-                  <p className={`text-xs ${isScrolled ? "text-gray-500" : "text-blue-300"} hidden sm:block`}>
+                  <p className={`text-xs ${isScrolled ? "text-gray-500" : "text-blue-300"}  sm:block`}>
                     The Praise Parish LP 132
                   </p>
                 </div>

@@ -30,7 +30,7 @@ export default function PastorSection() {
             <div className="relative rounded-2xl overflow-hidden shadow-2xl max-w-md mx-auto lg:mx-0 group">
               <motion.img
                 src="/ps.jpg"
-                alt="Pastor Shina Alabi"
+                alt="Pastor sina Alabi"
                 className="w-full h-[350px] sm:h-[400px] md:h-[450px] lg:h-[500px] object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-blue-900/60 via-transparent to-transparent" />
@@ -95,7 +95,7 @@ export default function PastorSection() {
             >
               <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold">
                 <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  Pastor Shina Alabi
+                  Pastor sina Alabi
                 </span>
               </h3>
               <p className="text-blue-600 font-semibold text-lg mt-1">Popularly Called <span className="text-purple-600">P.S</span></p>
@@ -109,7 +109,7 @@ export default function PastorSection() {
               className="space-y-4"
             >
               <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
-                Pastor Shina Alabi, affectionately known as <span className="font-semibold text-blue-600">P.S</span>, is a dynamic man of God with a heart for the lost and a passion for seeing lives transformed by the power of God's Word. With over 15 years of ministry experience, he has been instrumental in building a thriving community of believers at RCCG The Praise Parish.
+                Pastor sina Alabi, affectionately known as <span className="font-semibold text-blue-600">P.S</span>, is a dynamic man of God with a heart for the lost and a passion for seeing lives transformed by the power of God's Word. With over 15 years of ministry experience, he has been instrumental in building a thriving community of believers at RCCG The Praise Parish.
               </p>
               <motion.p 
                 initial={{ opacity: 0 }}

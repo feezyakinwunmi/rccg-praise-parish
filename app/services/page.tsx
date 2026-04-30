@@ -69,7 +69,7 @@ const services = [
   {
     id: 5,
     day: "Sunday",
-    title: "Youth Service",
+    title: "Youth Expression Service",
     time: "12:30 PM - 2:30 PM",
     icon: Users,
     color: "from-pink-500 to-red-500",
@@ -81,7 +81,7 @@ const services = [
   {
     id: 6,
     day: "Tuesday",
-    title: "Digging Deep Service",
+    title: "Bible Study",
     time: "5:00 PM - 6:00 PM",
     icon: BookOpen,
     color: "from-teal-500 to-green-500",
@@ -178,7 +178,7 @@ export default function ServicesPage() {
               <div className="font-bold">Sunday</div>
             </div>
             <div className="grid grid-cols-7 gap-2 text-center text-xs mt-2">
-                  <div className="text-blue-200">5pm Digging Deep</div>
+                  <div className="text-blue-200">5pm Bible Study</div>
               <div className="text-yellow-200 font-semibold">8:30am Divine Mercy</div>
               <div className="text-blue-200">5pm Moving Mountains</div>
              

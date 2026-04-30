@@ -33,7 +33,7 @@ const services = [
     color: "from-purple-500 to-purple-600"
   },
   {
-    day: "Youth Service",
+    day: "Youth Expression Service",
     time: "2nd-4th Sunday @ 12:30 PM",
     icon: Users,
     description: "Dynamic service for the youth",

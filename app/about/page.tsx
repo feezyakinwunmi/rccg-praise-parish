@@ -30,11 +30,11 @@ const tabs = [
 const ministers = [
   {
     id: 1,
-    name: "Pastor Shina Alabi",
+    name: "Pastor sina Alabi",
     role: "Senior Pastor",
     image: "/ps.jpg",
-    bio: "Pastor Shina Alabi, affectionately known as P.S, is the Senior Pastor of RCCG The Praise Parish. He is a dynamic teacher of God's Word with over 15 years of ministry experience.",
-    email: "pastor.shina@rccgpraiseparish.org",
+    bio: "Pastor sina Alabi, affectionately known as P.S, is the Senior Pastor of RCCG The Praise Parish. He is a dynamic teacher of God's Word with over 15 years of ministry experience.",
+    email: "pastor.sina@rccgpraiseparish.org",
     phone: "+234 123 456 7890",
     joined: "2010",
     education: "B.A. Theology, University of Lagos",
