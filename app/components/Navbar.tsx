@@ -30,10 +30,13 @@ export default function Navbar() {
   const [aboutOpen, setAboutOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  useEffect(() => {
+  // Close the menus when the route changes.
+  const [lastPath, setLastPath] = useState(pathname);
+  if (pathname !== lastPath) {
+    setLastPath(pathname);
     setMobileOpen(false);
     setAboutOpen(false);
-  }, [pathname]);
+  }
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);

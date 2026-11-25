@@ -90,15 +90,13 @@ function formatDate(date?: string) {
 }
 
 export default function GalleryPage() {
-  const [albums, setAlbums] = useState<Album[] | null>(null);
+  const driveConfigured = Boolean(GOOGLE_DRIVE_API_KEY && PARENT_FOLDER_ID);
+  const [albums, setAlbums] = useState<Album[] | null>(driveConfigured ? null : localAlbums);
   const [album, setAlbum] = useState<Album | null>(null);
   const [photo, setPhoto] = useState<Photo | null>(null);
 
   useEffect(() => {
-    if (!GOOGLE_DRIVE_API_KEY || !PARENT_FOLDER_ID) {
-      setAlbums(localAlbums);
-      return;
-    }
+    if (!driveConfigured) return;
     fetchDriveAlbums()
       .then((drive) => setAlbums(drive.length > 0 ? drive : localAlbums))
       .catch((err) => {

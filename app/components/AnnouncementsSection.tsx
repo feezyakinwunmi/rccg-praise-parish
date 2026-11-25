@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useNow } from "./useNow";
 import { ArrowRight, ArrowUpRight, Clock, MapPin } from "lucide-react";
 import { eventDay, splitEvents, type ChurchEvent } from "../data/events";
 import Reveal from "./Reveal";
@@ -46,8 +46,7 @@ export function EventCard({ event, past }: { event: ChurchEvent; past?: boolean 
 }
 
 export default function AnnouncementsSection() {
-  const [now, setNow] = useState<Date | null>(null);
-  useEffect(() => setNow(new Date()), []);
+  const now = useNow();
 
   // Split on the client only: the page is prerendered, so the server's date can be stale.
   const { upcoming, past } = now ? splitEvents(now) : { upcoming: [], past: [] };

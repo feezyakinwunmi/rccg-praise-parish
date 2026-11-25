@@ -72,8 +72,11 @@ export default function HeroSlider() {
               Ora Estate, Epe · Lagos Province 132 headquarters
             </p>
             <h1 className="display rise-2 max-w-[14ch] text-[48px] leading-[0.98] sm:text-[72px] lg:text-[92px] tracking-[-0.04em]">
-              A church family in Epe, since 1999
+              The Family church where you belong
             </h1>
+            <p className="display rise-2 mt-4 text-[24px] text-sun sm:text-[30px] lg:text-[36px] tracking-[-0.02em]">
+              The Favoured Family
+            </p>
             <p className="rise-3 mt-6 max-w-xl text-lg leading-8 text-white/80">
               Come and worship with us at RCCG The Praise Parish. Sunday school starts at 8:00, and
               there is a seat for you whether it is your first visit or your hundredth.

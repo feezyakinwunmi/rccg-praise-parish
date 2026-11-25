@@ -1,0 +1,242 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - navigation "Main navigation" [ref=e3]:
+      - link "The Praise Parish RCCG · Epe, Lagos" [ref=e4] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e5]:
+          - generic [ref=e6]: The Praise Parish
+          - generic [ref=e7]: RCCG · Epe, Lagos
+      - generic [ref=e8]:
+        - link "About" [ref=e10] [cursor=pointer]:
+          - /url: /about
+        - link "Services" [ref=e13] [cursor=pointer]:
+          - /url: /services
+        - link "Events" [ref=e14] [cursor=pointer]:
+          - /url: /events
+        - link "Gallery" [ref=e15] [cursor=pointer]:
+          - /url: /gallery
+        - link "Join" [ref=e16] [cursor=pointer]:
+          - /url: /join
+        - link "Contact" [ref=e17] [cursor=pointer]:
+          - /url: /contact
+        - link "Give online" [ref=e18] [cursor=pointer]:
+          - /url: /give
+  - main [ref=e19]:
+    - generic [ref=e23]:
+      - generic [ref=e24]:
+        - generic [ref=e25]:
+          - paragraph [ref=e26]: Service times
+          - heading "When we meet" [level=1] [ref=e27]
+          - generic [ref=e28]: Worship, prayer and teaching on Sundays and three times during the week. Everyone is welcome at every service.
+        - paragraph [ref=e32]: Next service
+      - navigation "Jump to" [ref=e35]:
+        - link "Sunday" [ref=e36] [cursor=pointer]:
+          - /url: "#sunday"
+        - link "Tuesday" [ref=e37] [cursor=pointer]:
+          - /url: "#weekdays"
+        - link "Wednesday" [ref=e38] [cursor=pointer]:
+          - /url: "#weekdays"
+        - link "Thursday" [ref=e39] [cursor=pointer]:
+          - /url: "#weekdays"
+        - link "First visit" [ref=e40] [cursor=pointer]:
+          - /url: "#first-visit"
+    - generic [ref=e42]:
+      - generic [ref=e43]:
+        - generic [ref=e44]:
+          - paragraph [ref=e45]: Every Sunday
+          - heading "Sunday, from 7:30 am" [level=2] [ref=e46]
+          - paragraph [ref=e47]: "Five gatherings across the morning and early afternoon. Come early for Sunday school: it is where foundations are laid and questions get answered."
+        - paragraph [ref=e49]: “A Sunday service without Sunday school is like treasure thrown into the ocean.”
+      - list [ref=e50]:
+        - listitem [ref=e52]:
+          - article [ref=e55]:
+            - generic [ref=e57]:
+              - generic [ref=e58]:
+                - generic [ref=e59]: 7:30 am
+                - generic [ref=e60]: 7:30 to 9:00 am
+              - heading "Early risers service" [level=3] [ref=e61]
+              - paragraph [ref=e62]: An early morning service to start Sunday in worship.
+              - paragraph [ref=e63]:
+                - generic [ref=e64]: Main sanctuary
+        - listitem [ref=e68]:
+          - article [ref=e71]:
+            - generic [ref=e73]:
+              - generic [ref=e74]:
+                - generic [ref=e75]: 8:00 am
+                - generic [ref=e76]: 8:00 to 9:00 am
+              - heading "Sunday school" [level=3] [ref=e77]
+              - paragraph [ref=e78]: Bible teaching and discipleship for all ages.
+              - paragraph [ref=e79]:
+                - generic [ref=e80]: Sunday school hall
+                - generic [ref=e84]: Runs at the same time as the early risers service
+        - listitem [ref=e85]:
+          - article [ref=e88]:
+            - generic [ref=e90]:
+              - generic [ref=e91]:
+                - generic [ref=e92]: 9:00 am
+                - generic [ref=e93]: 9:00 to 11:00 am
+              - heading "Second service" [level=3] [ref=e94]
+              - paragraph [ref=e95]: Our main Sunday gathering, with worship, prayer and the sermon.
+              - paragraph [ref=e96]:
+                - generic [ref=e97]: Main sanctuary
+        - listitem [ref=e101]:
+          - article [ref=e104]:
+            - generic [ref=e105]:
+              - generic [ref=e106]:
+                - generic [ref=e107]: 11:00 am
+                - generic [ref=e108]: Straight after second service
+              - heading "Baptismal and believers class" [level=3] [ref=e109]
+              - paragraph [ref=e110]: For new believers and for anyone preparing to be baptised.
+              - paragraph [ref=e111]:
+                - generic [ref=e112]: Fellowship hall
+        - listitem [ref=e116]:
+          - article [ref=e119]:
+            - generic [ref=e121]:
+              - generic [ref=e122]:
+                - generic [ref=e123]: 12:30 pm
+                - generic [ref=e124]: 12:30 to 2:30 pm
+              - heading "Youth expression service" [level=3] [ref=e125]
+              - paragraph [ref=e126]: A service for young people, with contemporary worship and teaching.
+              - paragraph [ref=e127]:
+                - generic [ref=e128]: Youth centre
+                - generic [ref=e132]: 2nd, 3rd and 4th Sundays of the month
+    - generic [ref=e134]:
+      - generic [ref=e135]:
+        - paragraph [ref=e136]: During the week
+        - heading "Midweek teaching and prayer" [level=2] [ref=e137]
+      - generic [ref=e138]:
+        - article [ref=e140]:
+          - paragraph [ref=e141]: Tue
+          - paragraph [ref=e142]: Every Tuesday
+          - generic [ref=e143]:
+            - generic [ref=e144]: 5:00 to 6:00 pm
+            - heading "Bible study" [level=3] [ref=e148]
+            - paragraph [ref=e149]: An hour of in-depth Bible teaching.
+            - paragraph [ref=e150]: Main sanctuary
+        - article [ref=e155]:
+          - paragraph [ref=e156]: Wed
+          - paragraph [ref=e157]: Every Wednesday
+          - generic [ref=e158]:
+            - generic [ref=e159]: 8:30 to 10:30 am
+            - heading "Divine mercy hour" [level=3] [ref=e163]
+            - paragraph [ref=e164]: A mid-week morning of prayer for mercy, healing and breakthrough.
+            - paragraph [ref=e165]: Main sanctuary
+        - article [ref=e170]:
+          - paragraph [ref=e171]: Thu
+          - paragraph [ref=e172]: Every Thursday
+          - generic [ref=e173]:
+            - generic [ref=e174]: 5:00 to 6:00 pm
+            - heading "Moving mountains" [level=3] [ref=e178]
+            - paragraph [ref=e179]: An evening of prayer and fasting.
+            - paragraph [ref=e180]: Prayer sanctuary
+    - generic [ref=e184]:
+      - generic [ref=e185]:
+        - generic [ref=e186]:
+          - paragraph [ref=e187]: Your first Sunday
+          - heading "New here? Start like this" [level=2] [ref=e188]
+        - link "Ask us anything" [ref=e189] [cursor=pointer]:
+          - /url: /contact
+      - generic [ref=e192]:
+        - generic [ref=e194]:
+          - generic [ref=e195]: "01"
+          - heading "Pick a service" [level=3] [ref=e203]
+          - paragraph [ref=e204]: The early risers service starts at 7:30 and the second service at 9:00. Sunday school runs from 8:00 to 9:00.
+        - generic [ref=e206]:
+          - generic [ref=e207]: "02"
+          - heading "Stay for the believers class" [level=3] [ref=e212]
+          - paragraph [ref=e213]: Straight after the second service, the baptismal and believers class meets for new believers and anyone preparing for baptism.
+        - link "03 Join the WhatsApp group Get parish news and updates through the week, so you know what is coming up." [ref=e215] [cursor=pointer]:
+          - /url: /join
+          - generic [ref=e216]: "03"
+          - heading "Join the WhatsApp group" [level=3] [ref=e221]
+          - paragraph [ref=e222]: Get parish news and updates through the week, so you know what is coming up.
+    - generic [ref=e226]:
+      - generic [ref=e227]:
+        - paragraph [ref=e228]: Your first Sunday
+        - heading "We would love to meet you" [level=2] [ref=e229]
+        - paragraph [ref=e230]: Find us at Ora Estate, Majoda, Epe, Lagos State. The early risers service starts at 7:30 and the second service at 9:00. Come as you are.
+        - generic [ref=e231]:
+          - link "Get directions" [ref=e232] [cursor=pointer]:
+            - /url: https://maps.google.com/?q=Ora+Estate+Epe+Lagos+Nigeria
+          - link "Ask us a question" [ref=e235] [cursor=pointer]:
+            - /url: /contact
+      - img "The parish family gathered outdoors" [ref=e239]
+  - contentinfo [ref=e240]:
+    - generic [ref=e242]:
+      - heading "See you on Sunday" [level=2] [ref=e243]
+      - generic [ref=e244]:
+        - link "Plan your visit" [ref=e245] [cursor=pointer]:
+          - /url: /contact
+        - link "Give online" [ref=e246] [cursor=pointer]:
+          - /url: /give
+    - generic [ref=e247]:
+      - generic [ref=e248]:
+        - generic [ref=e250]:
+          - paragraph [ref=e251]: The Praise Parish
+          - paragraph [ref=e252]: Lagos Province 132 headquarters
+        - paragraph [ref=e253]: A parish of the Redeemed Christian Church of God, meeting in Ora Estate, Epe since 1999.
+      - generic [ref=e254]:
+        - heading "Sundays" [level=3] [ref=e255]
+        - list [ref=e256]:
+          - listitem [ref=e257]:
+            - generic [ref=e258]: Early risers
+            - generic [ref=e260]: 7:30 am
+          - listitem [ref=e261]:
+            - generic [ref=e262]: Sunday school
+            - generic [ref=e264]: 8:00 am
+          - listitem [ref=e265]:
+            - generic [ref=e266]: Second
+            - generic [ref=e268]: 9:00 am
+      - generic [ref=e269]:
+        - heading "Visit" [level=3] [ref=e270]
+        - generic [ref=e271]:
+          - paragraph [ref=e272]: Ora Estate, Majoda
+          - paragraph [ref=e273]: Epe, Lagos State
+        - list [ref=e274]:
+          - listitem [ref=e275]:
+            - link "+234 801 234 5678" [ref=e276] [cursor=pointer]:
+              - /url: tel:+2348012345678
+          - listitem [ref=e277]:
+            - link "info@rccgpraiseparish.org" [ref=e278] [cursor=pointer]:
+              - /url: mailto:info@rccgpraiseparish.org
+      - generic [ref=e279]:
+        - heading "Pages" [level=3] [ref=e280]
+        - list [ref=e281]:
+          - listitem [ref=e282]:
+            - link "About us" [ref=e283] [cursor=pointer]:
+              - /url: /about
+          - listitem [ref=e287]:
+            - link "Service times" [ref=e288] [cursor=pointer]:
+              - /url: /services
+          - listitem [ref=e292]:
+            - link "Events" [ref=e293] [cursor=pointer]:
+              - /url: /events
+          - listitem [ref=e297]:
+            - link "Gallery" [ref=e298] [cursor=pointer]:
+              - /url: /gallery
+          - listitem [ref=e302]:
+            - link "Join the parish" [ref=e303] [cursor=pointer]:
+              - /url: /join
+          - listitem [ref=e307]:
+            - link "Give" [ref=e308] [cursor=pointer]:
+              - /url: /give
+          - listitem [ref=e312]:
+            - link "Contact" [ref=e313] [cursor=pointer]:
+              - /url: /contact
+    - generic [ref=e318]:
+      - paragraph [ref=e319]: © 2026 RCCG The Praise Parish
+      - list [ref=e320]:
+        - listitem [ref=e321]:
+          - link "Facebook" [ref=e322] [cursor=pointer]:
+            - /url: "#"
+        - listitem [ref=e323]:
+          - link "Instagram" [ref=e324] [cursor=pointer]:
+            - /url: "#"
+        - listitem [ref=e325]:
+          - link "YouTube" [ref=e326] [cursor=pointer]:
+            - /url: "#"
+        - listitem [ref=e327]:
+          - link "TikTok" [ref=e328] [cursor=pointer]:
+            - /url: "#"
+      - paragraph [ref=e329]: Site by Phantomire Technologies
+  - button "Open Next.js Dev Tools" [ref=e335] [cursor=pointer]

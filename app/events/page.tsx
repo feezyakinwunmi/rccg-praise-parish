@@ -6,14 +6,14 @@ import { Calendar, Clock, MapPin, X } from "lucide-react";
 import { formatEventDate, splitEvents, type ChurchEvent } from "../data/events";
 import { EventCard } from "../components/AnnouncementsSection";
 import { PageIntro } from "../components/ui";
+import { useNow } from "../components/useNow";
 
 type Filter = "all" | "upcoming" | "past";
 
 export default function EventsPage() {
-  const [now, setNow] = useState<Date | null>(null);
+  const now = useNow();
   const [filter, setFilter] = useState<Filter>("all");
   const [selected, setSelected] = useState<ChurchEvent | null>(null);
-  useEffect(() => setNow(new Date()), []);
 
   useEffect(() => {
     if (!selected) return;

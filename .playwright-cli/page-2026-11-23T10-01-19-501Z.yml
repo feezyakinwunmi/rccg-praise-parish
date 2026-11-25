@@ -1,0 +1,157 @@
+- generic [active] [ref=f4e1]:
+  - banner [ref=f4e2]:
+    - navigation "Main navigation" [ref=f4e3]:
+      - link "The Praise Parish RCCG · Epe, Lagos" [ref=f4e4] [cursor=pointer]:
+        - /url: /
+        - generic [ref=f4e5]:
+          - generic [ref=f4e6]: The Praise Parish
+          - generic [ref=f4e7]: RCCG · Epe, Lagos
+      - generic [ref=f4e8]:
+        - link "About" [ref=f4e10] [cursor=pointer]:
+          - /url: /about
+        - link "Services" [ref=f4e13] [cursor=pointer]:
+          - /url: /services
+        - link "Events" [ref=f4e14] [cursor=pointer]:
+          - /url: /events
+        - link "Gallery" [ref=f4e15] [cursor=pointer]:
+          - /url: /gallery
+        - link "Join" [ref=f4e16] [cursor=pointer]:
+          - /url: /join
+        - link "Contact" [ref=f4e17] [cursor=pointer]:
+          - /url: /contact
+        - link "Give online" [ref=f4e18] [cursor=pointer]:
+          - /url: /give
+  - main [ref=f4e19]:
+    - generic [ref=f4e23]:
+      - generic [ref=f4e25]:
+        - paragraph [ref=f4e26]: Leadership
+        - heading "Our pastors" [level=1] [ref=f4e27]
+        - generic [ref=f4e28]: Our pastors serve the church through teaching, prayer and care for individuals and families.
+      - navigation "About section" [ref=f4e30]:
+        - link "About us" [ref=f4e31] [cursor=pointer]:
+          - /url: /about
+        - link "Our story" [ref=f4e32] [cursor=pointer]:
+          - /url: /about/story
+        - link "Leadership" [ref=f4e33] [cursor=pointer]:
+          - /url: /about/leadership
+        - link "Ministries" [ref=f4e34] [cursor=pointer]:
+          - /url: /about/ministries
+    - generic [ref=f4e35]:
+      - article [ref=f4e36]:
+        - generic [ref=f4e37]:
+          - img "Pastor Sina Alabi" [ref=f4e39]
+          - generic [ref=f4e40]:
+            - paragraph [ref=f4e41]: P.S
+            - paragraph [ref=f4e42]: What the parish calls him
+        - generic [ref=f4e43]:
+          - generic [ref=f4e44]:
+            - paragraph [ref=f4e45]: Senior pastor
+            - heading "Pastor Sina Alabi" [level=2] [ref=f4e46]
+          - generic [ref=f4e47]:
+            - paragraph [ref=f4e48]: Pastor Sina Alabi, known around the parish as P.S, leads The Praise Parish and teaches God's Word. He has more than 15 years in ministry.
+            - paragraph [ref=f4e49]: He has a heart for people who do not yet know Christ, and he is committed to serving the church and the wider Epe community.
+          - generic [ref=f4e50]:
+            - generic [ref=f4e51]: Teaching
+            - generic [ref=f4e52]: Leadership
+            - generic [ref=f4e53]: Evangelism
+      - article [ref=f4e54]:
+        - img "Pastor Mrs. Peace Alabi" [ref=f4e57]
+        - generic [ref=f4e58]:
+          - generic [ref=f4e59]:
+            - paragraph [ref=f4e60]: Associate pastor
+            - heading "Pastor Mrs. Peace Alabi" [level=2] [ref=f4e61]
+          - generic [ref=f4e62]:
+            - paragraph [ref=f4e63]: Pastor Mrs. Peace Alabi serves the congregation through pastoral care and counselling.
+            - paragraph [ref=f4e64]: She leads the parish's ministry to women.
+          - generic [ref=f4e65]:
+            - generic [ref=f4e66]: Pastoral care
+            - generic [ref=f4e67]: Counselling
+            - generic [ref=f4e68]: Women's ministry
+    - generic [ref=f4e70]:
+      - generic [ref=f4e71]:
+        - heading "Want to speak with a pastor?" [level=2] [ref=f4e72]
+        - paragraph [ref=f4e73]: For prayer, counselling or a question about faith.
+      - generic [ref=f4e74]:
+        - link "Contact the parish" [ref=f4e75] [cursor=pointer]:
+          - /url: /contact
+        - link "Our ministries" [ref=f4e79] [cursor=pointer]:
+          - /url: /about/ministries
+  - contentinfo [ref=f4e82]:
+    - generic [ref=f4e84]:
+      - heading "See you on Sunday" [level=2] [ref=f4e85]
+      - generic [ref=f4e86]:
+        - link "Plan your visit" [ref=f4e87] [cursor=pointer]:
+          - /url: /contact
+        - link "Give online" [ref=f4e88] [cursor=pointer]:
+          - /url: /give
+    - generic [ref=f4e89]:
+      - generic [ref=f4e90]:
+        - generic [ref=f4e92]:
+          - paragraph [ref=f4e93]: The Praise Parish
+          - paragraph [ref=f4e94]: Lagos Province 132 headquarters
+        - paragraph [ref=f4e95]: A parish of the Redeemed Christian Church of God, meeting in Ora Estate, Epe since 1999.
+      - generic [ref=f4e96]:
+        - heading "Sundays" [level=3] [ref=f4e97]
+        - list [ref=f4e98]:
+          - listitem [ref=f4e99]:
+            - generic [ref=f4e100]: Early risers
+            - generic [ref=f4e102]: 7:30 am
+          - listitem [ref=f4e103]:
+            - generic [ref=f4e104]: Sunday school
+            - generic [ref=f4e106]: 8:00 am
+          - listitem [ref=f4e107]:
+            - generic [ref=f4e108]: Second
+            - generic [ref=f4e110]: 9:00 am
+      - generic [ref=f4e111]:
+        - heading "Visit" [level=3] [ref=f4e112]
+        - generic [ref=f4e113]:
+          - paragraph [ref=f4e114]: Ora Estate, Majoda
+          - paragraph [ref=f4e115]: Epe, Lagos State
+        - list [ref=f4e116]:
+          - listitem [ref=f4e117]:
+            - link "+234 801 234 5678" [ref=f4e118] [cursor=pointer]:
+              - /url: tel:+2348012345678
+          - listitem [ref=f4e119]:
+            - link "info@rccgpraiseparish.org" [ref=f4e120] [cursor=pointer]:
+              - /url: mailto:info@rccgpraiseparish.org
+      - generic [ref=f4e121]:
+        - heading "Pages" [level=3] [ref=f4e122]
+        - list [ref=f4e123]:
+          - listitem [ref=f4e124]:
+            - link "About us" [ref=f4e125] [cursor=pointer]:
+              - /url: /about
+          - listitem [ref=f4e129]:
+            - link "Service times" [ref=f4e130] [cursor=pointer]:
+              - /url: /services
+          - listitem [ref=f4e134]:
+            - link "Events" [ref=f4e135] [cursor=pointer]:
+              - /url: /events
+          - listitem [ref=f4e139]:
+            - link "Gallery" [ref=f4e140] [cursor=pointer]:
+              - /url: /gallery
+          - listitem [ref=f4e144]:
+            - link "Join the parish" [ref=f4e145] [cursor=pointer]:
+              - /url: /join
+          - listitem [ref=f4e149]:
+            - link "Give" [ref=f4e150] [cursor=pointer]:
+              - /url: /give
+          - listitem [ref=f4e154]:
+            - link "Contact" [ref=f4e155] [cursor=pointer]:
+              - /url: /contact
+    - generic [ref=f4e160]:
+      - paragraph [ref=f4e161]: © 2026 RCCG The Praise Parish
+      - list [ref=f4e162]:
+        - listitem [ref=f4e163]:
+          - link "Facebook" [ref=f4e164] [cursor=pointer]:
+            - /url: "#"
+        - listitem [ref=f4e165]:
+          - link "Instagram" [ref=f4e166] [cursor=pointer]:
+            - /url: "#"
+        - listitem [ref=f4e167]:
+          - link "YouTube" [ref=f4e168] [cursor=pointer]:
+            - /url: "#"
+        - listitem [ref=f4e169]:
+          - link "TikTok" [ref=f4e170] [cursor=pointer]:
+            - /url: "#"
+      - paragraph [ref=f4e171]: Site by Phantomire Technologies
+  - button "Open Next.js Dev Tools" [ref=f4e177] [cursor=pointer]
