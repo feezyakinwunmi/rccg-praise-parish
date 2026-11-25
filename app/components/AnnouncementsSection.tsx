@@ -1,318 +1,90 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef, useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, Calendar, Clock, MapPin, Users, Music, Mic, Crown } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { ArrowRight, ArrowUpRight, Clock, MapPin } from "lucide-react";
+import { eventDay, splitEvents, type ChurchEvent } from "../data/events";
+import Reveal from "./Reveal";
 
-// Event data structure
-interface Event {
-  id: string;
-  title: string;
-  date: string;
-  description: string;
-  image: string;
-  type: "upcoming" | "past";
-  icon: React.ElementType;
-  location?: string;
-  time?: string;
+export function EventCard({ event, past }: { event: ChurchEvent; past?: boolean }) {
+  const { day, month } = eventDay(event.date);
+  return (
+    <article className="card card-hover group flex h-full flex-col overflow-hidden">
+      <div className="zoom relative aspect-[4/3] bg-raised">
+        <img src={event.image} alt="" className="h-full w-full object-cover object-top" />
+        <div className="absolute left-4 top-4 flex flex-col items-center rounded-2xl bg-card px-3.5 py-2 text-center shadow-sm">
+          <span className="text-[12px] font-medium uppercase text-plum">{month}</span>
+          <span className="display text-[26px] leading-none tabular-nums text-ink">{day}</span>
+        </div>
+        {past && (
+          <span className="absolute right-4 top-4 rounded-full bg-ink/70 px-3 py-1 text-[12px] text-white backdrop-blur-sm">
+            Took place
+          </span>
+        )}
+        <span className="absolute bottom-4 right-4 flex h-11 w-11 translate-y-2 items-center justify-center rounded-full bg-white text-ink opacity-0 transition-[opacity,transform] duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+          <ArrowUpRight size={18} strokeWidth={1.75} aria-hidden="true" />
+        </span>
+      </div>
+      <div className="flex flex-1 flex-col p-6">
+        <h3 className="display text-[22px] leading-tight text-ink transition-colors group-hover:text-plum">
+          {event.title}
+        </h3>
+        <p className="mt-3 line-clamp-2 text-[15px] leading-6 text-ink-2">{event.summary}</p>
+        <div className="mt-auto flex flex-wrap gap-x-4 gap-y-1 pt-5 text-[13px] text-ink-3">
+          <span className="inline-flex items-center gap-1.5">
+            <Clock size={13} strokeWidth={1.75} aria-hidden="true" />
+            {event.time}
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <MapPin size={13} strokeWidth={1.75} aria-hidden="true" />
+            Epe
+          </span>
+        </div>
+      </div>
+    </article>
+  );
 }
 
-const events: Event[] = [
-  {
-    id: "1",
-    title: "Lagos Province 132 Women of Grace Conference",
-    date: "Saturday, May 16, 2026",
-    description: "A powerful women's conference tagged 'SOARING HIGHER IN CHRIST'. Join us for a day of worship, empowerment, and divine encounters.",
-    image: "/sh.jpeg",
-    type: "upcoming",
-    icon: Users,
-    location: "RCCG The Praise Parish, Ora Estate, Epe",
-    time: "8:00 AM - 4:00 PM",
-  },
-  {
-    id: "2",
-    title: "Pastor's Appreciation Sunday",
-    date: "Saturday, May 31, 2026",
-    description: "A special day to honor and celebrate our beloved Pastor Shina Alabi (P.S) for his dedication and service to God's kingdom.",
-    image: "/ppp.jpg",
-    type: "upcoming",
-    icon: Crown,
-    location: "RCCG The Praise Parish, Ora Estate, Epe",
-    time: "9:00 AM - 1:00 PM",
-  },
-  {
-    id: "3",
-    title: "The EPE PRAISE EXPERIENCE",
-    date: "April 19, 2026",
-    description: "A night of praise and worship with Pastor Nathaniel Bassey. An unforgettable experience of God's presence through music and worship.",
-    image: "/epe1.jpg",
-    type: "past",
-    icon: Music,
-    location: "Epe, Lagos",
-    time: "4:00 PM - 9:00 PM",
-  },
-];
+export default function AnnouncementsSection() {
+  const [now, setNow] = useState<Date | null>(null);
+  useEffect(() => setNow(new Date()), []);
 
-export default function EventsSection() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
-  const [activeTab, setActiveTab] = useState<"upcoming" | "past">("upcoming");
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [slidesToShow, setSlidesToShow] = useState(1);
-
-  const upcomingEvents = events.filter(event => event.type === "upcoming");
-  const pastEvents = events.filter(event => event.type === "past");
-  
-  const displayedEvents = activeTab === "upcoming" ? upcomingEvents : pastEvents;
-  
-  // Calculate total number of slides (each individual card is a slide)
-  const totalSlides = displayedEvents.length;
-  
-  // Calculate max slide index
-  const maxSlide = Math.max(0, totalSlides - slidesToShow);
-
-  useEffect(() => {
-    const handleResize = () => {
-      let newSlidesToShow = 1;
-      if (window.innerWidth >= 1024) {
-        newSlidesToShow = 3;
-      } else if (window.innerWidth >= 768) {
-        newSlidesToShow = 2;
-      } else {
-        newSlidesToShow = 1;
-      }
-      setSlidesToShow(newSlidesToShow);
-      // Reset current slide when responsive breakpoint changes
-      setCurrentSlide(0);
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  // Reset when tab changes
-  useEffect(() => {
-    setCurrentSlide(0);
-  }, [activeTab]);
-
-  // Move to next slide (one by one)
-  const nextSlide = () => {
-    if (currentSlide + 1 <= maxSlide) {
-      setCurrentSlide(currentSlide + 1);
-    }
-  };
-
-  // Move to previous slide (one by one)
-  const prevSlide = () => {
-    if (currentSlide - 1 >= 0) {
-      setCurrentSlide(currentSlide - 1);
-    }
-  };
-
-  const openEventsPage = () => {
-    window.open("/events", "_blank");
-  };
-
-  // Calculate transform percentage - each slide is 100% / slidesToShow of the visible area
-  const transformPercent = (currentSlide / totalSlides) * 100;
+  // Split on the client only: the page is prerendered, so the server's date can be stale.
+  const { upcoming, past } = now ? splitEvents(now) : { upcoming: [], past: [] };
+  const showing = upcoming.length > 0 ? upcoming : past;
+  const heading = !now
+    ? "Events at the parish"
+    : upcoming.length > 0
+      ? "Coming up at the parish"
+      : "Recently at the parish";
 
   return (
-    <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-gray-50 to-blue-50" id="events">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
-        
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-8 sm:mb-12"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full mb-4">
-            <Calendar className="w-4 h-4 text-blue-600" />
-            <span className="text-sm font-semibold text-blue-600">Church Events</span>
+    <section id="events" className="bg-raised/60 py-24 sm:py-36">
+      <div className="wrap">
+        <Reveal className="mb-14 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <div className="max-w-2xl">
+            <p className="eyebrow mb-5">Events</p>
+            <h2 className="display text-[40px] leading-[1.02] text-ink sm:text-[60px] tracking-[-0.04em]">{heading}</h2>
+            {now && upcoming.length === 0 && (
+              <p className="mt-5 text-[17px] leading-7 text-ink-2">
+                Nothing new is on the calendar yet. Here is what we gathered for most recently.
+              </p>
+            )}
           </div>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">Events & Programs</h2>
-          <div className="w-20 h-1 bg-blue-600 mx-auto" />
-          <p className="text-gray-600 mt-4 text-sm sm:text-base max-w-2xl mx-auto">
-            Join us for life-changing events and powerful worship experiences
-          </p>
-        </motion.div>
+          <Link href="/events" className="btn btn-secondary shrink-0">
+            All events <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
+          </Link>
+        </Reveal>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="flex justify-center gap-4 mb-8"
-        >
-          <button
-            onClick={() => setActiveTab("upcoming")}
-            className={`px-6 sm:px-8 py-2.5 rounded-full font-semibold transition-all duration-300 ${
-              activeTab === "upcoming"
-                ? "bg-blue-600 text-white shadow-lg scale-105"
-                : "bg-white text-gray-600 hover:bg-gray-100"
-            }`}
-          >
-            Upcoming Events ({upcomingEvents.length})
-          </button>
-          <button
-            onClick={() => setActiveTab("past")}
-            className={`px-6 sm:px-8 py-2.5 rounded-full font-semibold transition-all duration-300 ${
-              activeTab === "past"
-                ? "bg-blue-600 text-white shadow-lg scale-105"
-                : "bg-white text-gray-600 hover:bg-gray-100"
-            }`}
-          >
-            Past Events ({pastEvents.length})
-          </button>
-        </motion.div>
-
-        <div ref={ref}>
-          {displayedEvents.length > 0 ? (
-            <div className="relative">
-              <div className="overflow-hidden">
-                <motion.div
-                  animate={{ x: `-${currentSlide * (100 / slidesToShow)}%` }}
-                  transition={{ duration: 0.5, ease: "easeOut" }}
-                  className="flex"
-                >
-                  {displayedEvents.map((event, index) => (
-                    <div 
-                      key={event.id} 
-                      className="px-3 sm:px-4 flex-shrink-0"
-                      style={{ width: `${100 / slidesToShow}%` }}
-                    >
-                      <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        animate={isInView ? { opacity: 1, y: 0 } : {}}
-                        transition={{ duration: 0.5, delay: index * 0.1 }}
-                        className="bg-white rounded-2xl shadow-xl overflow-hidden transform transition-all hover:scale-105 h-full group"
-                      >
-                        <div className="relative h-48 sm:h-56 overflow-hidden">
-                          <img
-                            src={event.image}
-                            alt={event.title}
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                          
-                          <div className={`absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-semibold ${
-                            event.type === "upcoming" 
-                              ? "bg-green-500 text-white" 
-                              : "bg-gray-500 text-white"
-                          }`}>
-                            {event.type === "upcoming" ? "Upcoming" : "Past Event"}
-                          </div>
-                          
-                          <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm rounded-lg px-3 py-1.5">
-                            <div className="flex items-center gap-2 text-white text-xs">
-                              <Calendar className="w-3 h-3" />
-                              <span>{event.date}</span>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        <div className="p-5 sm:p-6">
-                          <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 line-clamp-2">
-                            {event.title}
-                          </h3>
-                          
-                          <p className="text-gray-600 text-sm sm:text-base mb-4 line-clamp-3">
-                            {event.description}
-                          </p>
-                          
-                          <div className="space-y-2 mb-4">
-                            {event.location && (
-                              <div className="flex items-center gap-2 text-gray-500 text-xs">
-                                <MapPin className="w-3 h-3" />
-                                <span>{event.location}</span>
-                              </div>
-                            )}
-                            {event.time && (
-                              <div className="flex items-center gap-2 text-gray-500 text-xs">
-                                <Clock className="w-3 h-3" />
-                                <span>{event.time}</span>
-                              </div>
-                            )}
-                          </div>
-                          
-                          <button
-                            onClick={openEventsPage}
-                            className="w-full mt-2 bg-blue-600 text-white px-4 py-2 rounded-full font-semibold hover:shadow-lg transition-all transform hover:scale-105 text-sm flex items-center justify-center gap-2"
-                          >
-                            <span>View Full Details</span>
-                            <ChevronRight className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </motion.div>
-                    </div>
-                  ))}
-                </motion.div>
-              </div>
-
-              {/* Navigation Buttons */}
-              {displayedEvents.length > slidesToShow && (
-                <>
-                  <button
-                    onClick={prevSlide}
-                    disabled={currentSlide === 0}
-                    className={`absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition -ml-2 sm:-ml-4 z-10 ${
-                      currentSlide === 0 ? "opacity-50 cursor-not-allowed" : "hover:scale-110"
-                    }`}
-                  >
-                    <ChevronLeft size={20} className="sm:w-5 sm:h-5 text-blue-600" />
-                  </button>
-                  <button
-                    onClick={nextSlide}
-                    disabled={currentSlide >= maxSlide}
-                    className={`absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-lg hover:shadow-xl transition -mr-2 sm:-mr-4 z-10 ${
-                      currentSlide >= maxSlide ? "opacity-50 cursor-not-allowed" : "hover:scale-110"
-                    }`}
-                  >
-                    <ChevronRight size={20} className="sm:w-5 sm:h-5 text-blue-600" />
-                  </button>
-                </>
-              )}
-            </div>
-          ) : (
-            <div className="text-center py-16">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4">
-                <Calendar className="w-10 h-10 text-gray-400" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">No {activeTab} Events</h3>
-              <p className="text-gray-500">Check back soon for upcoming events!</p>
-            </div>
-          )}
+        <div className="grid min-h-[420px] gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {showing.slice(0, 3).map((event, i) => (
+            <Reveal key={event.id} delay={i * 100}>
+              <Link href="/events" className="block h-full rounded-3xl">
+                <EventCard event={event} past={upcoming.length === 0} />
+              </Link>
+            </Reveal>
+          ))}
         </div>
-
-        {/* Dots Indicator */}
-        {displayedEvents.length > slidesToShow && (
-          <div className="flex justify-center space-x-2 mt-6 sm:mt-8">
-            {Array.from({ length: totalSlides - slidesToShow + 1 }).map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentSlide(index)}
-                className={`h-2 rounded-full transition-all ${
-                  currentSlide === index ? "w-6 sm:w-8 bg-blue-600" : "w-2 bg-gray-300"
-                }`}
-              />
-            ))}
-          </div>
-        )}
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="text-center mt-10"
-        >
-          <button
-            onClick={openEventsPage}
-            className="inline-flex items-center gap-2 bg-white text-gray-700 px-6 sm:px-8 py-3 rounded-full font-semibold shadow-md hover:shadow-xl transition-all transform hover:scale-105 border border-gray-200"
-          >
-            <Calendar className="w-4 h-4" />
-            <span>View All Events</span>
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </motion.div>
       </div>
     </section>
   );

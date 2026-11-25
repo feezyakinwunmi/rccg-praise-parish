@@ -3,9 +3,9 @@ import { MonthlyWord, WeeklyPrayer } from '../types';
 
 export const monthlyWord: MonthlyWord = {
   id: "1",
-  title: "The Good Fight of Faith ",
+  title: "The Good Fight of Faith",
   verse: "Amos 9:13 - 'Yes, the days are coming when the plowman will overtake the reaper...'",
-  message: "This is your season of supernatural speed. God is accelerating your destiny, your breakthroughs, and your testimonies. What normally takes years, God will do in months. Get ready for divine acceleration in every area of your life!",
+  message: "This is your season of supernatural speed. God is accelerating your destiny, your breakthroughs, and your testimonies. What normally takes years, God will do in months. Get ready for divine acceleration in every area of your life.",
   image: "/month.jpg",
   date: "April 2026"
 };

@@ -1,221 +1,138 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, Book, Heart, Cross } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowRight, BookOpen, X } from "lucide-react";
 import { monthlyWord, weeklyPrayers } from "../data/contents";
+import type { WeeklyPrayer } from "../types";
+import Reveal from "./Reveal";
+
+function splitVerse(verse: string) {
+  const [ref, ...rest] = verse.split(" - ");
+  return { ref: ref.trim(), text: rest.join(" - ").replace(/^'|'$/g, "").trim() };
+}
 
 export default function WordAndPrayer() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const [currentPrayerIndex, setCurrentPrayerIndex] = useState(0);
-  const [isPrayerModalOpen, setIsPrayerModalOpen] = useState(false);
-  const [selectedPrayer, setSelectedPrayer] = useState(weeklyPrayers[0]);
+  const [selected, setSelected] = useState<WeeklyPrayer | null>(null);
+  const word = splitVerse(monthlyWord.verse);
 
-  const nextPrayer = () => {
-    setCurrentPrayerIndex((prev) => (prev + 1) % weeklyPrayers.length);
-  };
-
-  const prevPrayer = () => {
-    setCurrentPrayerIndex((prev) => (prev - 1 + weeklyPrayers.length) % weeklyPrayers.length);
-  };
-
-  const openPrayerModal = (prayer: any) => {
-    setSelectedPrayer(prayer);
-    setIsPrayerModalOpen(true);
-  };
+  useEffect(() => {
+    if (!selected) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setSelected(null);
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [selected]);
 
   return (
-    <>
-      <section className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50" id="word-and-prayer">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
-          {/* Section Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full mb-4">
-              <Book className="w-4 h-4 text-blue-600" />
-              <span className="text-sm font-semibold text-blue-600">Spiritual Nourishment</span>
+    <section id="word-and-prayer" className="wrap py-24 sm:py-36">
+      <Reveal className="mb-14 max-w-3xl">
+        <p className="eyebrow mb-5">{monthlyWord.date}</p>
+        <h2 className="display text-[40px] leading-[1.02] text-ink sm:text-[60px] tracking-[-0.04em]">
+          This month&apos;s word, and this week&apos;s prayer
+        </h2>
+      </Reveal>
+
+      <div className="grid gap-6 lg:grid-cols-[7fr_5fr]">
+        <Reveal>
+          <article className="group relative flex min-h-[560px] flex-col justify-end overflow-hidden rounded-[32px] bg-navy-deep text-white">
+            <div className="zoom absolute inset-0">
+              <img src={monthlyWord.image} alt="" className="h-full w-full object-cover" />
             </div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Word for the Month & 
-              <span className="text-transparent bg-clip-text bg-blue-600"> Prayer Focus</span>
-            </h2>
-            <div className="w-20 h-1 bg-blue-600 mx-auto" />
-          </motion.div>
+            <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(8,16,24,0.95)_0%,rgba(8,16,24,0.6)_50%,rgba(8,16,24,0.2)_100%)]" />
+            <div className="relative p-7 sm:p-10">
+              <span className="inline-flex items-center gap-2 rounded-full bg-sun px-3 py-1.5 text-[13px] font-medium text-ink">
+                <BookOpen size={14} strokeWidth={2} aria-hidden="true" />
+                Word for {monthlyWord.date}
+              </span>
+              <h3 className="display mt-5 text-[36px] leading-[1.05] sm:text-[48px] tracking-[-0.04em]">{monthlyWord.title.trim()}</h3>
+              <blockquote className="mt-5 border-l-2 border-sun pl-5">
+                <p className="text-[19px] leading-8 text-white/90">{word.text}</p>
+                <cite className="mt-1 block text-sm not-italic text-white/60">{word.ref}</cite>
+              </blockquote>
+              <p className="mt-5 max-w-2xl text-[16px] leading-7 text-white/75">{monthlyWord.message}</p>
+            </div>
+          </article>
+        </Reveal>
 
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-stretch">
-            
-            {/* Left Side - Word for the Month */}
-            <motion.div
-              ref={ref}
-              initial={{ opacity: 0, x: -50 }}
-              animate={isInView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-              className="group cursor-pointer"
-            >
-              <div className="relative h-full rounded-2xl overflow-hidden shadow-2xl">
-                <img
-                  src={monthlyWord.image}
-                  alt={monthlyWord.title}
-                  className="w-full h-[400px] sm:h-[450px] object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                
-                {/* Dark Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
-                
-                {/* Content */}
-                <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-600 rounded-full mb-4">
-                    <Cross className="w-3 h-3 text-white" />
-                    <span className="text-white text-xs font-semibold">Word for {monthlyWord.date}</span>
-                  </div>
-                  
-                  <h3 className="text-2xl sm:text-3xl font-bold text-white mb-3">
-                    {monthlyWord.title}
-                  </h3>
-                  
-                  <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 mb-4 border-l-4 border-blue-500">
-                    <p className="text-blue-200 text-sm italic">"{monthlyWord.verse}"</p>
-                  </div>
-                  
-                  <p className="text-gray-200 leading-relaxed text-sm sm:text-base">
-                    {monthlyWord.message}
-                  </p>
-                  
-                  <button className="mt-6 inline-flex items-center gap-2 text-blue-300 hover:text-white transition-colors">
-                    <span>Declare this word</span>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                  </button>
-                </div>
-                
-                {/* Glow effect on hover */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-purple-500/20" />
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Right Side - Prayer for the Week */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={isInView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="bg-white rounded-2xl shadow-xl overflow-hidden"
-            >
-              {/* Header */}
-              <div className="bg-blue-600 p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Heart className="w-8 h-8 text-white mb-2" />
-                    <h3 className="text-2xl font-bold text-white">Prayer for the Week</h3>
-                    <p className="text-blue-100 text-sm mt-1">Join us in prayer</p>
-                  </div>
-                  <div className="text-right">
-                    <div className="bg-white/20 rounded-lg px-3 py-1">
-                      <span className="text-white text-sm">{weeklyPrayers.length} Prayers</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Prayer List - Scrollable */}
-              <div className="max-h-[400px] overflow-y-auto">
-                {weeklyPrayers.map((prayer, index) => (
-                  <motion.div
-                    key={prayer.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ delay: 0.3 + (index * 0.03) }}
-                    onClick={() => openPrayerModal(prayer)}
-                    className="border-b border-gray-100 hover:bg-gradient-to-r hover:from-blue-50 hover:to-purple-50 transition-all cursor-pointer group"
-                  >
-                    <div className="p-4">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">
-                              {index + 1}
-                            </span>
-                            <h4 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
-                              {prayer.title}
-                            </h4>
-                          </div>
-                          <p className="text-gray-600 text-sm line-clamp-2">
-                            {prayer.prayer}
-                          </p>
-                          <p className="text-xs text-gray-400 mt-2">
-                            {prayer.date}
-                          </p>
-                        </div>
-                        <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors flex-shrink-0 ml-2" />
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Navigation Hints */}
-              <div className="bg-gray-50 p-4 text-center border-t border-gray-200">
-                <p className="text-xs text-gray-500">
-                  Click on any prayer to read and meditate
-                </p>
-              </div>
-            </motion.div>
+        <Reveal delay={120} className="card flex flex-col overflow-hidden">
+          <div className="flex items-center justify-between px-7 pb-4 pt-7">
+            <h3 className="display text-[26px] text-ink">Prayer for each week</h3>
+            <span className="rounded-full bg-raised px-3 py-1 text-[13px] tabular-nums text-ink-2">
+              {weeklyPrayers.length} weeks
+            </span>
           </div>
-        </div>
-      </section>
+          <ol className="max-h-[480px] flex-1 overflow-y-auto px-3 pb-3">
+            {weeklyPrayers.map((prayer) => (
+              <li key={prayer.id}>
+                <button
+                  type="button"
+                  onClick={() => setSelected(prayer)}
+                  className="group flex w-full items-center gap-4 rounded-2xl px-4 py-3.5 text-left transition-colors duration-200 hover:bg-raised"
+                >
+                  <span className="display flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line-strong text-[15px] tabular-nums text-ink transition-colors duration-200 group-hover:border-plum group-hover:bg-plum group-hover:text-white">
+                    {prayer.week}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-[15px] font-medium text-ink">
+                      {prayer.title.replace("Prayer for ", "")}
+                    </span>
+                    <span className="mt-0.5 block truncate text-sm text-ink-3">{prayer.prayer}</span>
+                  </span>
+                  <ArrowRight
+                    size={16}
+                    strokeWidth={1.75}
+                    className="shrink-0 -translate-x-1 text-plum opacity-0 transition-[opacity,transform] duration-200 group-hover:translate-x-0 group-hover:opacity-100"
+                    aria-hidden="true"
+                  />
+                </button>
+              </li>
+            ))}
+          </ol>
+        </Reveal>
+      </div>
 
-      {/* Prayer Modal */}
-      {isPrayerModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={() => setIsPrayerModalOpen(false)}>
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+      {selected && (
+        <div
+          className="fixed inset-0 z-[60] flex items-end justify-center bg-ink/60 p-4 backdrop-blur-sm sm:items-center"
+          onClick={() => setSelected(null)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="prayer-title"
+            className="rise w-full max-w-lg rounded-[28px] bg-card p-7 sm:p-9"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="bg-blue-600 p-6 sticky top-0">
-              <div className="flex items-center justify-between">
-                <h3 className="text-2xl font-bold text-white">{selectedPrayer.title}</h3>
-                <button
-                  onClick={() => setIsPrayerModalOpen(false)}
-                  className="text-white hover:text-gray-200 transition"
-                >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-            
-            <div className="p-6 space-y-6">
-              <div className="bg-blue-50 rounded-xl p-4 border-l-4 border-blue-500">
-                <p className="text-blue-800 italic">"{selectedPrayer.verse}"</p>
-              </div>
-              
+            <div className="flex items-start justify-between gap-4">
               <div>
-                <h4 className="font-semibold text-gray-900 mb-2">Prayer Point:</h4>
-                <p className="text-gray-700 leading-relaxed">{selectedPrayer.prayer}</p>
+                <p className="text-sm text-ink-3">{selected.date}</p>
+                <h3 id="prayer-title" className="display mt-1 text-[32px] leading-tight text-ink">
+                  {selected.title}
+                </h3>
               </div>
-              
-              <div className="bg-purple-50 rounded-xl p-4">
-                <h4 className="font-semibold text-purple-900 mb-2">💭 Reflect & Apply:</h4>
-                <p className="text-purple-800 text-sm">
-                  Take 5 minutes to pray this prayer. Trust God to answer according to His will.
-                </p>
-              </div>
+              <button
+                type="button"
+                onClick={() => setSelected(null)}
+                aria-label="Close"
+                className="-mr-2 -mt-1 flex h-10 w-10 items-center justify-center rounded-full text-ink-2 transition-[background-color,transform] duration-200 hover:rotate-90 hover:bg-raised"
+              >
+                <X size={18} strokeWidth={1.75} />
+              </button>
             </div>
-          </motion.div>
+            <p className="mt-6 text-[18px] leading-8 text-ink">{selected.prayer}</p>
+            <blockquote className="mt-6 rounded-2xl bg-plum-soft p-5">
+              <p className="text-[16px] leading-7 text-plum-deep">{splitVerse(selected.verse).text}</p>
+              <cite className="mt-1 block text-sm not-italic text-plum">{splitVerse(selected.verse).ref}</cite>
+            </blockquote>
+            <p className="mt-6 text-sm leading-6 text-ink-3">
+              Take five minutes to pray this through, and trust God to answer in his way.
+            </p>
+          </div>
         </div>
       )}
-    </>
+    </section>
   );
 }

@@ -1,389 +1,225 @@
-"use client";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowRight, BookOpen, Clock, MapPin, MessageCircle, Sunrise } from "lucide-react";
+import { sundayServices, weekdayServices } from "../data/schedule";
+import PhotoHero from "../components/PhotoHero";
+import NextService from "../components/NextService";
+import Reveal from "../components/Reveal";
+import VisitSection from "../components/VisitSection";
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { 
-  Clock, 
-  Users, 
-  Heart, 
-  Music, 
-  BookOpen,
-  Cross,
-  Coffee,
-  ChevronRight,
-  MapPin,
-  Bell,
-  Sun,
-  Moon,
-  Zap
-} from "lucide-react";
+export const metadata: Metadata = {
+  title: "Service times | RCCG The Praise Parish",
+  description:
+    "Sunday and weekday service times at RCCG The Praise Parish, Ora Estate, Epe: Sunday school, second service, youth service, Bible study and prayer.",
+};
 
-// All services data - Updated Schedule
-const services = [
-  {
-    id: 1,
-    day: "Sunday",
-    title: "Early Risers Service",
-    time: "7:30 AM - 9:00 AM",
-    icon: Sun,
-    color: "from-amber-500 to-orange-500",
-    description: "An early morning worship experience to start your Sunday with God's presence and fresh anointing.",
-    location: "Main Sanctuary",
-    type: "weekly",
-  },
-  {
-    id: 2,
-    day: "Sunday",
-    title: "Sunday School",
-    time: "8:00 AM - 9:00 AM",
-    icon: BookOpen,
-    color: "from-blue-400 to-blue-500",
-    description: "In-depth Bible study and discipleship for all ages. Grow in the knowledge of God's Word.",
-    location: "Sunday School Hall",
-    type: "weekly",
-    note: "Runs concurrently with Early Risers Service",
-  },
-  {
-    id: 3,
-    day: "Sunday",
-    title: "Second Service",
-    time: "9:00 AM - 11:00 AM",
-    icon: Heart,
-    color: "from-purple-500 to-purple-600",
-    description: "Our main Sunday celebration with powerful worship, prayer, and life-changing messages.",
-    location: "Main Sanctuary",
-    type: "weekly",
-  },
-  {
-    id: 4,
-    day: "Sunday",
-    title: "Baptismal & Believers Class",
-    time: "Immediately after Second Service",
-    icon: Cross,
-    color: "from-blue-600 to-purple-600",
-    description: "New converts class and baptismal preparation for those ready to take a step of faith.",
-    location: "Fellowship Hall",
-    type: "weekly",
-    note: "For new believers and those ready for baptism",
-  },
-  {
-    id: 5,
-    day: "Sunday",
-    title: "Youth Expression Service",
-    time: "12:30 PM - 2:30 PM",
-    icon: Users,
-    color: "from-pink-500 to-red-500",
-    description: "Dynamic youth-focused service with contemporary worship and relevant teachings.",
-    location: "Youth Center",
-    type: "special",
-    schedule: "2nd, 3rd & 4th Sundays only",
-  },
-  {
-    id: 6,
-    day: "Tuesday",
-    title: "Bible Study",
-    time: "5:00 PM - 6:00 PM",
-    icon: BookOpen,
-    color: "from-teal-500 to-green-500",
-    description: "Intensive Bible study and teaching service for spiritual growth and depth.",
-    location: "Main Sanctuary",
-    type: "weekly",
-  },
-  {
-    id: 7,
-    day: "Wednesday",
-    title: "Divine Mercy Hour",
-    time: "8:30 AM - 10:30 AM",
-    icon: Cross,
-    color: "from-red-500 to-pink-500",
-    description: "A special mid-week service focused on experiencing God's mercy, healing, and breakthrough prayers.",
-    location: "Main Sanctuary",
-    type: "weekly",
-    highlight: true,
-  },
-  {
-    id: 8,
-    day: "Thursday",
-    title: "Moving Mountains",
-    time: "5:00 PM - 6:00 PM",
-    icon: Zap,
-    color: "from-indigo-500 to-purple-500",
-    description: "Power-packed prayer and fasting service for mountain-moving breakthroughs.",
-    location: "Prayer Sanctuary",
-    type: "weekly",
-  },
- 
- 
+const jump = [
+  { label: "Sunday", href: "#sunday" },
+  { label: "Tuesday", href: "#weekdays" },
+  { label: "Wednesday", href: "#weekdays" },
+  { label: "Thursday", href: "#weekdays" },
+  { label: "First visit", href: "#first-visit" },
 ];
 
-// Days of week for filtering
-const days = ["All", "Sunday", "Tuesday", "Wednesday", "Thursday", ];
+const weekdayTone = [
+  { card: "bg-navy text-white", muted: "text-white/65", chip: "bg-white/10 text-white", day: "text-sun" },
+  { card: "bg-plum text-white", muted: "text-white/70", chip: "bg-white/15 text-white", day: "text-white" },
+  { card: "bg-card text-ink border border-line", muted: "text-ink-2", chip: "bg-raised text-ink", day: "text-plum" },
+];
+
+const steps = [
+  {
+    icon: Sunrise,
+    title: "Pick a service",
+    text: "The early risers service starts at 7:30 and the second service at 9:00. Sunday school runs from 8:00 to 9:00.",
+  },
+  {
+    icon: BookOpen,
+    title: "Stay for the believers class",
+    text: "Straight after the second service, the baptismal and believers class meets for new believers and anyone preparing for baptism.",
+  },
+  {
+    icon: MessageCircle,
+    title: "Join the WhatsApp group",
+    text: "Get parish news and updates through the week, so you know what is coming up.",
+    href: "/join",
+  },
+];
 
 export default function ServicesPage() {
-  const [selectedDay, setSelectedDay] = useState("All");
-  const [filteredServices, setFilteredServices] = useState(services);
-
-  useEffect(() => {
-    if (selectedDay === "All") {
-      setFilteredServices(services);
-    } else {
-      setFilteredServices(services.filter(service => service.day === selectedDay));
-    }
-  }, [selectedDay]);
-
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 pt-24 sm:pt-28 pb-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Page Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-8 sm:mb-12"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full mb-4">
-            <Clock className="w-4 h-4 text-blue-600" />
-            <span className="text-sm font-semibold text-blue-600">Worship With Us</span>
-          </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Our
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-              {" "}Services
-            </span>
-          </h1>
-          <div className="w-20 h-1 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto" />
-          <p className="text-gray-600 mt-4 text-sm sm:text-base max-w-2xl mx-auto">
-            Join us for worship, prayer, and fellowship throughout the week. There's a place for everyone at RCCG The Praise Parish.
-          </p>
-        </motion.div>
-
-        {/* Weekly Schedule Summary */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-4 sm:p-6 mb-8 text-white overflow-x-auto"
-        >
-          <div className="min-w-[600px]">
-            <div className="flex items-center gap-3 mb-4">
-              <Bell className="w-6 h-6 animate-pulse" />
-              <h3 className="font-bold text-lg">Weekly Schedule at a Glance</h3>
-            </div>
-            <div className="grid grid-cols-7 gap-2 text-center text-xs">
-              <div className="font-bold">Tuesday</div>
-              <div className="font-bold">Wednesday</div>
-              <div className="font-bold">Thursday</div>
-              
-              <div className="font-bold">Sunday</div>
-            </div>
-            <div className="grid grid-cols-7 gap-2 text-center text-xs mt-2">
-                  <div className="text-blue-200">5pm Bible Study</div>
-              <div className="text-yellow-200 font-semibold">8:30am Divine Mercy</div>
-              <div className="text-blue-200">5pm Moving Mountains</div>
-             
-              <div className="text-blue-200">7:30am, 9am, 12:30pm</div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Day Filter */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="flex flex-wrap justify-center gap-2 mb-8"
-        >
-          {days.map((day) => (
-            <button
-              key={day}
-              onClick={() => setSelectedDay(day)}
-              className={`px-4 py-2 rounded-full font-semibold transition-all duration-300 text-sm ${
-                selectedDay === day
-                  ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg scale-105"
-                  : "bg-white text-gray-600 hover:bg-gray-100 shadow-md"
-              }`}
-            >
-              {day}
-            </button>
-          ))}
-        </motion.div>
-
-        {/* Services Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {filteredServices.map((service, index) => {
-            const Icon = service.icon;
-            const isHighlighted = service.highlight;
-            
-            return (
-              <motion.div
-                key={service.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                className={`group relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 ${
-                  isHighlighted ? "ring-2 ring-red-400" : ""
-                }`}
+    <>
+      <PhotoHero
+        image="/ch4.jpg"
+        position="center 62%"
+        kicker="Service times"
+        title="When we meet"
+        aside={<NextService />}
+        bottom={
+          <nav aria-label="Jump to" className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
+            {jump.map((j) => (
+              <a
+                key={j.label}
+                href={j.href}
+                className="whitespace-nowrap rounded-full border border-white/25 px-5 py-2.5 text-sm text-white/80 transition-colors duration-200 hover:border-white hover:bg-white hover:text-ink"
               >
-                {isHighlighted && (
-                  <div className="absolute top-0 right-0 bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1 text-xs font-bold rounded-bl-lg z-10">
-                    🔥 Mercy Hour
+                {j.label}
+              </a>
+            ))}
+          </nav>
+        }
+      >
+        Worship, prayer and teaching on Sundays and three times during the week. Everyone is welcome
+        at every service.
+      </PhotoHero>
+
+      {/* Sunday timeline */}
+      <section id="sunday" className="wrap scroll-mt-24 py-24 sm:py-32">
+        <div className="grid gap-14 lg:grid-cols-[4fr_7fr] lg:gap-20">
+          <div className="lg:sticky lg:top-28 lg:self-start">
+            <Reveal>
+              <p className="eyebrow mb-5">Every Sunday</p>
+              <h2 className="display text-[44px] leading-[1] tracking-[-0.04em] text-ink sm:text-[64px]">
+                Sunday, from 7:30 am
+              </h2>
+              <p className="mt-6 text-[17px] leading-8 text-ink-2">
+                Five gatherings across the morning and early afternoon. Come early for Sunday school:
+                it is where foundations are laid and questions get answered.
+              </p>
+            </Reveal>
+            <Reveal delay={120} className="mt-10 rounded-3xl bg-navy p-7 text-white">
+              <p className="display text-[22px] leading-[1.35]">
+                &ldquo;A Sunday service without Sunday school is like treasure thrown into the ocean.&rdquo;
+              </p>
+            </Reveal>
+          </div>
+
+          <ol className="relative">
+            <span aria-hidden="true" className="absolute bottom-6 left-[19px] top-6 w-px bg-line-strong sm:left-[23px]" />
+            {sundayServices.map((s, i) => (
+              <Reveal as="li" key={s.id} delay={i * 70} className="group relative pb-6 pl-14 last:pb-0 sm:pl-16">
+                <span
+                  aria-hidden="true"
+                  className="absolute left-0 top-7 flex h-10 w-10 items-center justify-center rounded-full border-2 border-line-strong bg-paper transition-colors duration-300 group-hover:border-plum group-hover:bg-plum sm:h-12 sm:w-12"
+                >
+                  <span className="h-2 w-2 rounded-full bg-ink-3 transition-colors duration-300 group-hover:bg-white" />
+                </span>
+                <article className="card card-hover flex flex-col overflow-hidden sm:flex-row">
+                  {s.image && (
+                    <div className="zoom aspect-[16/9] sm:aspect-auto sm:w-56 sm:shrink-0">
+                      <img src={s.image} alt="" className="h-full w-full object-cover" />
+                    </div>
+                  )}
+                  <div className="flex-1 p-6">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="display text-[28px] leading-none tabular-nums tracking-[-0.02em] text-ink">
+                        {s.start}
+                      </span>
+                      <span className="rounded-full bg-raised px-3 py-1 text-[12px] tabular-nums text-ink-2">{s.range}</span>
+                    </div>
+                    <h3 className="display mt-3 text-[22px] text-ink transition-colors group-hover:text-plum">{s.title}</h3>
+                    <p className="mt-1.5 text-[15px] leading-6 text-ink-2">{s.description}</p>
+                    <p className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-[13px] text-ink-3">
+                      <span className="inline-flex items-center gap-1.5">
+                        <MapPin size={13} strokeWidth={1.75} aria-hidden="true" />
+                        {s.location}
+                      </span>
+                      {s.note && <span className="text-plum">{s.note}</span>}
+                    </p>
                   </div>
+                </article>
+              </Reveal>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* Weekdays */}
+      <section id="weekdays" className="scroll-mt-24 bg-raised/60 py-24 sm:py-32">
+        <div className="wrap">
+          <Reveal className="mb-14 max-w-2xl">
+            <p className="eyebrow mb-5">During the week</p>
+            <h2 className="display text-[44px] leading-[1] tracking-[-0.04em] text-ink sm:text-[64px]">
+              Midweek teaching and prayer
+            </h2>
+          </Reveal>
+          <div className="grid gap-5 md:grid-cols-3">
+            {weekdayServices.map((s, i) => {
+              const tone = weekdayTone[i % weekdayTone.length];
+              return (
+                <Reveal key={s.id} delay={i * 100}>
+                  <article
+                    className={`${tone.card} group flex h-full min-h-[380px] flex-col rounded-[32px] p-8 transition-[transform,box-shadow] duration-500 [transition-timing-function:var(--ease-soft)] hover:-translate-y-2 hover:shadow-[0_32px_64px_-28px_rgba(18,38,58,0.55)]`}
+                  >
+                    <p className={`display text-[56px] leading-none tracking-[-0.04em] ${tone.day}`}>
+                      {s.day.slice(0, 3)}
+                    </p>
+                    <p className={`mt-2 text-sm ${tone.muted}`}>Every {s.day}</p>
+                    <div className="mt-auto pt-12">
+                      <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-medium tabular-nums ${tone.chip}`}>
+                        <Clock size={13} strokeWidth={2} aria-hidden="true" />
+                        {s.range}
+                      </span>
+                      <h3 className="display mt-4 text-[28px] leading-tight">{s.title}</h3>
+                      <p className={`mt-2 text-[15px] leading-6 ${tone.muted}`}>{s.description}</p>
+                      <p className={`mt-4 inline-flex items-center gap-1.5 text-[13px] ${tone.muted}`}>
+                        <MapPin size={13} strokeWidth={1.75} aria-hidden="true" />
+                        {s.location}
+                      </p>
+                    </div>
+                  </article>
+                </Reveal>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* First visit */}
+      <section id="first-visit" className="wrap scroll-mt-24 py-24 sm:py-32">
+        <Reveal className="mb-14 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <div className="max-w-2xl">
+            <p className="eyebrow mb-5">Your first Sunday</p>
+            <h2 className="display text-[44px] leading-[1] tracking-[-0.04em] text-ink sm:text-[64px]">
+              New here? Start like this
+            </h2>
+          </div>
+          <Link href="/contact" className="btn btn-secondary shrink-0">
+            Ask us anything <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
+          </Link>
+        </Reveal>
+        <div className="grid gap-5 md:grid-cols-3">
+          {steps.map((step, i) => {
+            const body = (
+              <>
+                <span className="flex items-center justify-between">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-plum-soft text-plum transition-colors duration-300 group-hover:bg-plum group-hover:text-white">
+                    <step.icon size={20} strokeWidth={1.75} aria-hidden="true" />
+                  </span>
+                  <span className="display text-[48px] leading-none tracking-[-0.04em] text-raised transition-colors duration-300 group-hover:text-plum-soft">
+                    0{i + 1}
+                  </span>
+                </span>
+                <h3 className="display mt-10 text-[24px] text-ink">{step.title}</h3>
+                <p className="mt-2 text-[15px] leading-6 text-ink-2">{step.text}</p>
+              </>
+            );
+            return (
+              <Reveal key={step.title} delay={i * 100}>
+                {step.href ? (
+                  <Link href={step.href} className="card card-hover group block h-full p-7">
+                    {body}
+                  </Link>
+                ) : (
+                  <div className="card card-hover group h-full p-7">{body}</div>
                 )}
-                
-                <div className="p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className={`w-12 h-12 bg-gradient-to-r ${service.color} rounded-full flex items-center justify-center`}>
-                      <Icon className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900">{service.title}</h3>
-                      <p className="text-sm text-gray-500">{service.day}s</p>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-3 mb-4">
-                    <div className="flex items-center gap-2 text-gray-600 text-sm">
-                      <Clock className="w-4 h-4 text-blue-500" />
-                      <span>{service.time}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-gray-600 text-sm">
-                      <MapPin className="w-4 h-4 text-blue-500" />
-                      <span>{service.location}</span>
-                    </div>
-                  </div>
-                  
-                  <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                    {service.description}
-                  </p>
-                  
-                  {service.note && (
-                    <div className="bg-amber-50 border-l-4 border-amber-500 p-2 rounded text-xs text-amber-700">
-                      📌 {service.note}
-                    </div>
-                  )}
-                  
-                  {service.schedule && (
-                    <div className="bg-purple-50 border-l-4 border-purple-500 p-2 rounded text-xs text-purple-700">
-                      📅 {service.schedule}
-                    </div>
-                  )}
-                  
-                  <div className="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      service.type === "weekly" ? "bg-green-100 text-green-600" : 
-                      service.type === "special" ? "bg-orange-100 text-orange-600" :
-                      "bg-purple-100 text-purple-600"
-                    }`}>
-                      {service.type === "weekly" ? "Weekly" : service.type === "special" ? "Special" : "Monthly"}
-                    </span>
-                    <button className="text-blue-600 text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
-                      Join Us <ChevronRight className="w-3 h-3" />
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
+              </Reveal>
             );
           })}
         </div>
+      </section>
 
-        {/* Sunday Schedule Summary */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="mt-8 bg-white rounded-2xl shadow-xl overflow-hidden"
-        >
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <Sun className="w-5 h-5" />
-              Sunday Service Schedule
-            </h2>
-          </div>
-          <div className="p-6">
-            <div className="space-y-4">
-              <div className="flex flex-wrap items-center justify-between border-b pb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
-                    <Sun className="w-5 h-5 text-amber-600" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-gray-900">Early Risers Service</p>
-                    <p className="text-sm text-gray-500">First service of the day</p>
-                  </div>
-                </div>
-                <p className="text-blue-600 font-semibold">7:30 AM - 9:00 AM</p>
-              </div>
-              
-              <div className="flex flex-wrap items-center justify-between border-b pb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                    <BookOpen className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-gray-900">Sunday School</p>
-                    <p className="text-sm text-gray-500">Bible study for all ages</p>
-                  </div>
-                </div>
-                <p className="text-blue-600 font-semibold">8:00 AM - 9:00 AM</p>
-              </div>
-              
-              <div className="flex flex-wrap items-center justify-between border-b pb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                    <Heart className="w-5 h-5 text-purple-600" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-gray-900">Second Service</p>
-                    <p className="text-sm text-gray-500">Main Sunday celebration</p>
-                  </div>
-                </div>
-                <p className="text-blue-600 font-semibold">9:00 AM - 11:00 AM</p>
-              </div>
-              
-              <div className="flex flex-wrap items-center justify-between border-b pb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                    <Cross className="w-5 h-5 text-green-600" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-gray-900">Baptismal & Believers Class</p>
-                    <p className="text-sm text-gray-500">For new converts</p>
-                  </div>
-                </div>
-                <p className="text-blue-600 font-semibold">After Second Service</p>
-              </div>
-              
-              <div className="flex flex-wrap items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-pink-100 rounded-full flex items-center justify-center">
-                    <Users className="w-5 h-5 text-pink-600" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-gray-900">Youth Service</p>
-                    <p className="text-sm text-gray-500">2nd, 3rd & 4th Sundays only</p>
-                  </div>
-                </div>
-                <p className="text-blue-600 font-semibold">12:30 PM - 2:30 PM</p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* CTA Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="mt-12 text-center bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-8"
-        >
-          <h3 className="text-xl font-bold text-gray-900 mb-2">Need More Information?</h3>
-          <p className="text-gray-600 mb-4">Have questions about our services or ministries?</p>
-          <button className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg transition-all transform hover:scale-105">
-            Contact Us
-          </button>
-        </motion.div>
-      </div>
-    </main>
+      <VisitSection />
+    </>
   );
 }

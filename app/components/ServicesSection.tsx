@@ -1,199 +1,67 @@
-"use client";
+import Link from "next/link";
+import { ArrowRight, Clock } from "lucide-react";
+import { sundayServices } from "../data/schedule";
+import Reveal from "./Reveal";
 
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
-import { Clock, Calendar, Users, Heart, Music, BookOpen, ArrowRight } from "lucide-react";
-
-const services = [
-  {
-    day: "Sunday School",
-    time: "8:00 AM - 9:00 AM",
-    icon: BookOpen,
-    description: "Biblical teaching and discipleship",
-    image: "/sc.jpg",
-    height: "h-64 sm:h-72",
-    color: "from-blue-500 to-blue-600"
-  },
-  {
-    day: "First Service",
-    time: "7:30 AM - 9:00 AM",
-    icon: Clock,
-    description: "Morning worship experience",
-    image: "/ch3.jpg",
-    height: "h-48 sm:h-56",
-    color: "from-blue-600 to-purple-600"
-  },
-  {
-    day: "Second Service",
-    time: "10:00 AM - 12:00 PM",
-    icon: Heart,
-    description: "Main Sunday celebration",
-    image: "/ch4.jpg",
-    height: "h-72 sm:h-80",
-    color: "from-purple-500 to-purple-600"
-  },
-  {
-    day: "Youth Expression Service",
-    time: "2nd-4th Sunday @ 12:30 PM",
-    icon: Users,
-    description: "Dynamic service for the youth",
-    image: "/youth.jpg",
-    height: "h-56 sm:h-64",
-    color: "from-pink-500 to-purple-600"
-  },
-
-];
+const pictured = sundayServices.filter((s) => s.image);
 
 export default function ServicesSection() {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-
   return (
-    <section className="py-12 sm:py-16 md:py-20 bg-white overflow-hidden" id="services">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 2xl:px-16">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-start">
-          
-          {/* Left Side - Compelling Text */}
-          <motion.div
-            ref={ref}
-            initial={{ opacity: 0, x: -50 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-            className="space-y-6"
-          >
-            {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={isInView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ delay: 0.1, duration: 0.4 }}
-            >
-              <span className="inline-block px-4 py-1 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full text-blue-600 text-sm font-semibold">
-                Worship With Us
-              </span>
-            </motion.div>
-
-            {/* Title */}
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 leading-tight"
-            >
-              Experience God's Presence
-              <span className="block text-transparent bg-clip-text bg-blue-600">
-                In Every Service
-              </span>
-            </motion.h2>
-
-            {/* Main Message */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.3, duration: 0.5 }}
-              className="space-y-4"
-            >
-              <p className="text-gray-600 leading-relaxed text-base sm:text-lg">
-                Remember, your Sunday service isn't complete without Sunday School. 
-              </p>
-              <p className="text-gray-700 leading-relaxed text-base sm:text-lg font-medium italic border-l-4 border-blue-500 pl-4">
-                "A Sunday service without Sunday School is like a treasure thrown into the ocean — 
-                you leave with enthusiasm but miss the depth of God's Word."
-              </p>
-              <p className="text-gray-600 leading-relaxed text-base">
-                Sunday School is where foundations are built, questions are answered, and 
-                faith takes root. Join us as we dive deep into God's Word together!
-              </p>
-            </motion.div>
-
-            {/* Quick Stats */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.4, duration: 0.5 }}
-              className="grid grid-cols-2 gap-4 pt-4"
-            >
-              <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-4 text-center">
-                <div className="text-2xl font-bold text-blue-600">5+</div>
-                <div className="text-xs text-gray-600">Weekly Services</div>
-              </div>
-              <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-4 text-center">
-                <div className="text-2xl font-bold text-purple-600">1000+</div>
-                <div className="text-xs text-gray-600">Active Members</div>
-              </div>
-            </motion.div>
-
-            {/* CTA Button */}
-            <motion.button
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: 0.5, duration: 0.5 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="group bg-blue-600 text-white px-6 sm:px-8 py-3 rounded-full font-semibold hover:shadow-xl transition-all duration-300 inline-flex items-center gap-2"
-            >
-              View Full Schedule
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </motion.button>
-          </motion.div>
-
-          {/* Right Side - Masonry Style Images */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.7, ease: [0.4, 0, 0.2, 1] }}
-            className="relative"
-          >
-            <div className="grid grid-cols-2 gap-3 sm:gap-4 auto-rows-min">
-              {services.map((service, index) => (
-                <motion.div
-                  key={service.day}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ delay: 0.2 + (index * 0.05), duration: 0.5 }}
-                  whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
-                  className={`relative overflow-hidden rounded-2xl shadow-lg group cursor-pointer ${service.height}`}
-                  style={{
-                    gridRow: `span ${Math.ceil(parseInt(service.height.split('h-')[1]) / 16)}`,
-                  }}
-                >
-                  <img
-                    src={service.image}
-                    alt={service.day}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  
-                  {/* Dark Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-                  
-                  {/* Content */}
-                  <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
-                    <div className="flex items-center gap-2 mb-1">
-                      <div className={`w-6 h-6 rounded-full bg-gradient-to-r ${service.color} flex items-center justify-center`}>
-                        <service.icon className="w-3 h-3 text-white" />
-                      </div>
-                      <h3 className="text-white font-bold text-sm sm:text-base">
-                        {service.day}
-                      </h3>
-                    </div>
-                    <p className="text-blue-200 text-xs sm:text-sm">
-                      {service.time}
-                    </p>
-                    <p className="text-white/70 text-xs mt-1 hidden sm:block">
-                      {service.description}
-                    </p>
-                  </div>
-                  
-                  {/* Hover Effect Border */}
-                  <div className="absolute inset-0 border-2 border-white/0 rounded-2xl group-hover:border-white/30 transition-all duration-300" />
-                </motion.div>
-              ))}
-            </div>
-            
-            {/* Decorative Elements */}
-            <div className="absolute -top-4 -right-4 w-32 h-32 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full opacity-20 blur-3xl -z-10" />
-            <div className="absolute -bottom-4 -left-4 w-40 h-40 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full opacity-20 blur-3xl -z-10" />
-          </motion.div>
+    <section id="services" className="bg-navy py-24 text-white sm:py-36">
+      <div className="wrap">
+        <div className="grid gap-10 lg:grid-cols-[1fr_1fr] lg:items-end lg:gap-24">
+          <Reveal>
+            <p className="eyebrow mb-5 text-sun">Sundays at the parish</p>
+            <h2 className="display text-[40px] leading-[1.02] sm:text-[60px] tracking-[-0.04em]">
+              Come early, Sunday school starts at eight
+            </h2>
+          </Reveal>
+          <Reveal delay={100}>
+            <p className="text-[17px] leading-8 text-white/75">
+              Sunday school is where foundations are laid and questions get answered. It runs from
+              8:00 to 9:00, alongside the early risers service, before the second service begins.
+            </p>
+            <Link href="/services" className="btn btn-light mt-8">
+              Full weekly schedule <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
+            </Link>
+          </Reveal>
         </div>
+
+        <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {pictured.map((s, i) => (
+            <Reveal key={s.id} delay={i * 90}>
+              <Link
+                href="/services"
+                className="group relative block aspect-[3/4] overflow-hidden rounded-3xl bg-navy-deep"
+              >
+                <div className="zoom absolute inset-0">
+                  <img src={s.image} alt="" className="h-full w-full object-cover" />
+                </div>
+                <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(8,16,24,0.9)_0%,rgba(8,16,24,0.15)_55%,rgba(8,16,24,0)_100%)]" />
+                <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-[13px] font-medium tabular-nums text-ink">
+                  <Clock size={13} strokeWidth={2} aria-hidden="true" />
+                  {s.start}
+                </span>
+                <div className="absolute inset-x-0 bottom-0 p-5">
+                  <h3 className="display text-[24px] leading-tight">{s.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-white/70">{s.note ?? s.description}</p>
+                  <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-sun opacity-0 transition-[opacity,transform] duration-300 group-hover:translate-x-1 group-hover:opacity-100">
+                    Details <ArrowRight size={14} strokeWidth={2} aria-hidden="true" />
+                  </span>
+                </div>
+              </Link>
+            </Reveal>
+          ))}
+        </div>
+
+        <Reveal className="mx-auto mt-24 max-w-4xl text-center">
+          <blockquote>
+            <p className="display text-[28px] leading-[1.25] text-white sm:text-[40px] tracking-[-0.025em]">
+              &ldquo;A Sunday service without Sunday school is like treasure thrown into the ocean. You
+              leave with enthusiasm but miss the depth of God&apos;s Word.&rdquo;
+            </p>
+          </blockquote>
+        </Reveal>
       </div>
     </section>
   );

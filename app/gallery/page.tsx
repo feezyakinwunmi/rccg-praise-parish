@@ -1,338 +1,238 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { 
-  FolderOpen, 
-  Image as ImageIcon, 
-  Calendar, 
-  Download,
-  X,
-  ChevronLeft,
-  ChevronRight
-} from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowLeft, Download, X } from "lucide-react";
+import { PageIntro } from "../components/ui";
 
-// Google Drive API configuration
-// You'll need to set up a Google Cloud Project and enable Drive API
+// Albums load from Google Drive when these are set. Each folder in the parent
+// folder becomes an album. Without them, the albums below are shown instead.
 const GOOGLE_DRIVE_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_DRIVE_API_KEY;
 const PARENT_FOLDER_ID = process.env.NEXT_PUBLIC_DRIVE_PARENT_FOLDER_ID;
 
-interface DriveFile {
+interface Photo {
   id: string;
   name: string;
-  mimeType: string;
-  webViewLink?: string;
-  thumbnailLink?: string;
-  webContentLink?: string;
-  imageUrl?: string;
+  imageUrl: string;
 }
 
-interface EventFolder {
+interface Album {
   id: string;
   name: string;
-  images: DriveFile[];
+  images: Photo[];
   createdTime?: string;
 }
 
-export default function GalleryPage() {
-  const [eventFolders, setEventFolders] = useState<EventFolder[]>([]);
-  const [selectedEvent, setSelectedEvent] = useState<EventFolder | null>(null);
-  const [selectedImage, setSelectedImage] = useState<DriveFile | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+const localAlbums: Album[] = [
+  {
+    id: "epe-praise-experience",
+    name: "Epe Praise Experience 1.0",
+    createdTime: "2026-04-19",
+    images: ["epe", "epe2", "epe3", "epe4", "epe5", "epe6", "epe7", "epe8", "epe9", "epe10"].map((f) => ({
+      id: f,
+      name: `Epe Praise Experience, photo ${f.replace("epe", "") || "1"}`,
+      imageUrl: `/${f}.jpg`,
+    })),
+  },
+  {
+    id: "parish-life",
+    name: "Sundays at the parish",
+    images: ["tppc", "pra", "ch", "ch2", "ch3", "ch4", "sc", "youth"].map((f) => ({
+      id: f,
+      name: "A Sunday at The Praise Parish",
+      imageUrl: `/${f}.jpg`,
+    })),
+  },
+];
 
-  // Fetch folders (events) from Google Drive
+async function fetchDriveAlbums(): Promise<Album[]> {
+  const base = "https://www.googleapis.com/drive/v3/files";
+  const foldersRes = await fetch(
+    `${base}?q='${PARENT_FOLDER_ID}'+in+parents+and+mimeType='application/vnd.google-apps.folder'+and+trashed=false&key=${GOOGLE_DRIVE_API_KEY}&fields=files(id,name,createdTime)`
+  );
+  const folders = await foldersRes.json();
+  if (!folders.files) return [];
+
+  const albums: Album[] = await Promise.all(
+    folders.files.map(async (folder: { id: string; name: string; createdTime?: string }) => {
+      const imagesRes = await fetch(
+        `${base}?q='${folder.id}'+in+parents+and+(mimeType='image/jpeg'+or+mimeType='image/png'+or+mimeType='image/jpg'+or+mimeType='image/webp')+and+trashed=false&key=${GOOGLE_DRIVE_API_KEY}&fields=files(id,name)&pageSize=50`
+      );
+      const images = await imagesRes.json();
+      return {
+        id: folder.id,
+        name: folder.name,
+        createdTime: folder.createdTime,
+        images: (images.files || []).map((img: { id: string; name: string }) => ({
+          id: img.id,
+          name: img.name,
+          imageUrl: `${base}/${img.id}?alt=media&key=${GOOGLE_DRIVE_API_KEY}`,
+        })),
+      };
+    })
+  );
+
+  return albums
+    .filter((a) => a.images.length > 0)
+    .sort((a, b) => (b.createdTime ?? "").localeCompare(a.createdTime ?? ""));
+}
+
+function prettyName(fileName: string) {
+  return fileName.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
+}
+
+function formatDate(date?: string) {
+  if (!date) return "";
+  return new Date(date.length === 10 ? `${date}T12:00:00` : date).toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+export default function GalleryPage() {
+  const [albums, setAlbums] = useState<Album[] | null>(null);
+  const [album, setAlbum] = useState<Album | null>(null);
+  const [photo, setPhoto] = useState<Photo | null>(null);
+
   useEffect(() => {
-    const fetchFoldersAndImages = async () => {
-      try {
-        setLoading(true);
-        
-        // Step 1: Get all folders in the parent directory
-        const foldersResponse = await fetch(
-          `https://www.googleapis.com/drive/v3/files?q='${PARENT_FOLDER_ID}'+in+parents+and+mimeType='application/vnd.google-apps.folder'+and+trashed=false&key=${GOOGLE_DRIVE_API_KEY}&fields=files(id,name,createdTime)`
-        );
-        
-        const foldersData = await foldersResponse.json();
-        
-        if (!foldersData.files) {
-          setError("No folders found");
-          setLoading(false);
-          return;
-        }
-        
-        // Step 2: For each folder, fetch images inside
-        const foldersWithImages = await Promise.all(
-          foldersData.files.map(async (folder: any) => {
-            const imagesResponse = await fetch(
-              `https://www.googleapis.com/drive/v3/files?q='${folder.id}'+in+parents+and+(mimeType='image/jpeg'+or+mimeType='image/png'+or+mimeType='image/jpg'+or+mimeType='image/webp')+and+trashed=false&key=${GOOGLE_DRIVE_API_KEY}&fields=files(id,name,mimeType,webViewLink,thumbnailLink)&pageSize=50`
-            );
-            
-            const imagesData = await imagesResponse.json();
-            
-            // Get direct download URLs for images
-            const imagesWithUrls = await Promise.all(
-              (imagesData.files || []).map(async (image: any) => {
-                // Get direct download link
-                const directLink = `https://www.googleapis.com/drive/v3/files/${image.id}?alt=media&key=${GOOGLE_DRIVE_API_KEY}`;
-                
-                return {
-                  ...image,
-                  imageUrl: directLink,
-                };
-              })
-            );
-            
-            return {
-              id: folder.id,
-              name: folder.name,
-              images: imagesWithUrls,
-              createdTime: folder.createdTime,
-            };
-          })
-        );
-        
-        // Sort by newest first and filter folders with images
-        const sortedFolders = foldersWithImages
-          .filter(folder => folder.images.length > 0)
-          .sort((a, b) => {
-            if (!a.createdTime || !b.createdTime) return 0;
-            return new Date(b.createdTime).getTime() - new Date(a.createdTime).getTime();
-          });
-        
-        setEventFolders(sortedFolders);
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching from Google Drive:", err);
-        setError("Failed to load gallery. Please try again later.");
-        setLoading(false);
-      }
-    };
-    
-    if (GOOGLE_DRIVE_API_KEY && PARENT_FOLDER_ID) {
-      fetchFoldersAndImages();
-    } else {
-      setError("Google Drive API not configured. Please check your environment variables.");
-      setLoading(false);
+    if (!GOOGLE_DRIVE_API_KEY || !PARENT_FOLDER_ID) {
+      setAlbums(localAlbums);
+      return;
     }
+    fetchDriveAlbums()
+      .then((drive) => setAlbums(drive.length > 0 ? drive : localAlbums))
+      .catch((err) => {
+        console.error("Could not load the gallery from Google Drive:", err);
+        setAlbums(localAlbums);
+      });
   }, []);
 
-  // Helper function to format filename for display
-  const formatFileName = (fileName: string) => {
-    const nameWithoutExt = fileName.replace(/\.[^/.]+$/, "");
-    return nameWithoutExt.replace(/[-_]/g, " ");
-  };
-
-  // Helper function to format date
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return "";
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
-
-  if (loading) {
-    return (
-      <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 pt-24 sm:pt-28 pb-16">
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-center">
-            <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading gallery...</p>
-          </div>
-        </div>
-      </main>
-    );
-  }
-
-  if (error) {
-    return (
-      <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 pt-24 sm:pt-28 pb-16">
-        <div className="text-center py-16">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-red-100 rounded-full mb-4">
-            <ImageIcon className="w-10 h-10 text-red-500" />
-          </div>
-          <p className="text-gray-600">{error}</p>
-          <p className="text-sm text-gray-400 mt-2">
-            Make sure to add folders and images to your Google Drive.
-          </p>
-        </div>
-      </main>
-    );
-  }
+  useEffect(() => {
+    if (!album && !photo) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Escape") return;
+      if (photo) setPhoto(null);
+      else setAlbum(null);
+    };
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [album, photo]);
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 pt-24 sm:pt-28 pb-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Page Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-8 sm:mb-12"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full mb-4">
-            <ImageIcon className="w-4 h-4 text-blue-600" />
-            <span className="text-sm font-semibold text-blue-600">Our Memories</span>
-          </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Photo
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-              {" "}Gallery
-            </span>
-          </h1>
-          <div className="w-20 h-1 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto" />
-          <p className="text-gray-600 mt-4 text-sm sm:text-base max-w-2xl mx-auto">
-            Capturing God's goodness through moments of worship, fellowship, and celebration.
-          </p>
-        </motion.div>
+    <>
+      <PageIntro kicker="Gallery" title="Photos from the parish">
+        Sundays, special services and the evenings we have shared together in Epe.
+      </PageIntro>
 
-        {/* Events Grid */}
-        {eventFolders.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4">
-              <FolderOpen className="w-10 h-10 text-gray-400" />
-            </div>
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">No Events Yet</h3>
-            <p className="text-gray-500">Check back soon for event photos!</p>
-          </div>
+      <section className="wrap min-h-[480px] pb-24 sm:pb-32">
+        {albums === null ? (
+          <p className="text-[15px] text-ink-3">Loading albums…</p>
         ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {eventFolders.map((event, index) => (
-              <motion.div
-                key={event.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                onClick={() => setSelectedEvent(event)}
-                className="group cursor-pointer"
-              >
-                <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2">
-                  {/* Cover Image */}
-                  <div className="relative h-56 overflow-hidden bg-gray-200">
-                    {event.images[0] ? (
-                      <img
-                        src={event.images[0].imageUrl}
-                        alt={event.name}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <ImageIcon className="w-12 h-12 text-gray-400" />
-                      </div>
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                    <div className="absolute bottom-3 left-3 bg-black/50 backdrop-blur-sm rounded-lg px-2 py-1">
-                      <div className="flex items-center gap-1 text-white text-xs">
-                        <ImageIcon className="w-3 h-3" />
-                        <span>{event.images.length} photos</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Event Info */}
-                  <div className="p-5">
-                    <h3 className="text-lg font-bold text-gray-900 mb-1 line-clamp-1">
-                      {event.name}
-                    </h3>
-                    {event.createdTime && (
-                      <div className="flex items-center gap-1 text-gray-500 text-xs mb-2">
-                        <Calendar className="w-3 h-3" />
-                        <span>{formatDate(event.createdTime)}</span>
-                      </div>
-                    )}
-                    <p className="text-gray-600 text-sm line-clamp-2">
-                      {event.images.length} {event.images.length === 1 ? "memory" : "memories"} captured
-                    </p>
-                    <button className="mt-3 text-blue-600 text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
-                      View Gallery <ChevronRight className="w-3 h-3" />
-                    </button>
-                  </div>
+          <div className="grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+            {albums.map((a) => (
+              <button key={a.id} type="button" onClick={() => setAlbum(a)} className="group rounded-2xl text-left">
+                <div className="grid aspect-[4/3] grid-cols-3 grid-rows-2 gap-1.5 overflow-hidden rounded-2xl bg-raised">
+                  {a.images.slice(0, 3).map((img, i) => (
+                    <img
+                      key={img.id}
+                      src={img.imageUrl}
+                      alt=""
+                      className={`h-full w-full object-cover ${i === 0 ? "col-span-2 row-span-2" : ""}`}
+                    />
+                  ))}
                 </div>
-              </motion.div>
+                <h2 className="mt-5 text-[17px] font-medium text-ink transition-colors group-hover:text-plum">
+                  {a.name}
+                </h2>
+                <p className="mt-1 text-sm tabular-nums text-ink-3">
+                  {a.images.length} photos{a.createdTime ? ` · ${formatDate(a.createdTime)}` : ""}
+                </p>
+              </button>
             ))}
           </div>
         )}
-      </div>
+      </section>
 
-      {/* Event Modal - View all images in an event */}
-      {selectedEvent && (
-        <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-sm overflow-y-auto" onClick={() => setSelectedEvent(null)}>
-          <div className="min-h-screen p-4 sm:p-6">
-            <div className="max-w-6xl mx-auto">
-              {/* Modal Header */}
-              <div className="flex justify-between items-center mb-6">
-                <div>
-                  <h2 className="text-2xl font-bold text-white">{selectedEvent.name}</h2>
-                  {selectedEvent.createdTime && (
-                    <p className="text-gray-400 text-sm">{formatDate(selectedEvent.createdTime)}</p>
-                  )}
-                </div>
-                <button
-                  onClick={() => setSelectedEvent(null)}
-                  className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition"
+      {album && (
+        <div className="fixed inset-0 z-[60] overflow-y-auto bg-paper" role="dialog" aria-modal="true" aria-labelledby="album-title">
+          <div className="sticky top-0 z-10 border-b border-line bg-paper/95 backdrop-blur-[6px]">
+            <div className="wrap flex h-16 items-center justify-between gap-4">
+              <button
+                type="button"
+                onClick={() => setAlbum(null)}
+                className="-ml-2 inline-flex h-10 items-center gap-2 rounded-lg px-2 text-[15px] text-ink-2 transition-colors hover:bg-raised hover:text-ink"
+              >
+                <ArrowLeft size={16} strokeWidth={1.5} aria-hidden="true" />
+                All albums
+              </button>
+              <p id="album-title" className="truncate text-[15px] font-medium text-ink">
+                {album.name}
+              </p>
+              <span className="w-[110px] text-right text-sm tabular-nums text-ink-3">{album.images.length} photos</span>
+            </div>
+          </div>
+          <div className="wrap columns-2 gap-3 py-8 sm:columns-3 lg:columns-4">
+            {album.images.map((img) => (
+              <button
+                key={img.id}
+                type="button"
+                onClick={() => setPhoto(img)}
+                className="mb-3 block w-full overflow-hidden rounded-xl bg-raised"
+              >
+                <img
+                  src={img.imageUrl}
+                  alt={prettyName(img.name)}
+                  loading="lazy"
+                  className="w-full transition-opacity duration-150 hover:opacity-90"
+                />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {photo && (
+        <div
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-[#0d1218]/95 p-4"
+          onClick={() => setPhoto(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-label={prettyName(photo.name)}
+        >
+          <div className="w-full max-w-5xl" onClick={(e) => e.stopPropagation()}>
+            <img
+              src={photo.imageUrl}
+              alt={prettyName(photo.name)}
+              className="max-h-[80vh] w-full rounded-lg object-contain"
+            />
+            <div className="mt-4 flex items-center justify-between gap-4 text-white/80">
+              <p className="truncate text-sm">{prettyName(photo.name)}</p>
+              <div className="flex gap-2">
+                <a
+                  href={photo.imageUrl}
+                  download
+                  className="inline-flex h-10 items-center gap-2 rounded-[10px] bg-white/10 px-4 text-sm text-white transition-colors hover:bg-white/20"
                 >
-                  <X className="w-5 h-5" />
+                  <Download size={16} strokeWidth={1.5} aria-hidden="true" />
+                  Download
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setPhoto(null)}
+                  aria-label="Close photo"
+                  className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-white/10 text-white transition-colors hover:bg-white/20"
+                >
+                  <X size={18} strokeWidth={1.5} />
                 </button>
               </div>
-
-              {/* Images Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                {selectedEvent.images.map((image, idx) => (
-                  <motion.div
-                    key={image.id}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: idx * 0.02 }}
-                    onClick={() => setSelectedImage(image)}
-                    className="aspect-square rounded-xl overflow-hidden cursor-pointer group bg-gray-800"
-                  >
-                    <img
-                      src={image.imageUrl}
-                      alt={formatFileName(image.name)}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                      loading="lazy"
-                    />
-                  </motion.div>
-                ))}
-              </div>
             </div>
           </div>
         </div>
       )}
-
-      {/* Image Lightbox Modal */}
-      {selectedImage && (
-        <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-sm flex items-center justify-center p-4" onClick={() => setSelectedImage(null)}>
-          <div className="relative max-w-5xl w-full" onClick={(e) => e.stopPropagation()}>
-            <button
-              onClick={() => setSelectedImage(null)}
-              className="absolute -top-12 right-0 w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition"
-            >
-              <X className="w-5 h-5" />
-            </button>
-            
-            <img
-              src={selectedImage.imageUrl}
-              alt={formatFileName(selectedImage.name)}
-              className="w-full h-auto max-h-[85vh] object-contain rounded-lg"
-            />
-            
-            <div className="flex justify-between items-center mt-4">
-              <p className="text-white text-sm">{formatFileName(selectedImage.name)}</p>
-              <a
-                href={selectedImage.imageUrl}
-                download
-                className="flex items-center gap-2 text-white bg-white/10 px-4 py-2 rounded-lg hover:bg-white/20 transition"
-              >
-                <Download className="w-4 h-4" />
-                Download
-              </a>
-            </div>
-          </div>
-        </div>
-      )}
-    </main>
+    </>
   );
 }

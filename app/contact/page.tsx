@@ -1,398 +1,260 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { 
-  MapPin, 
-  Phone, 
-  Mail, 
-  Clock, 
-  Send, 
-  CheckCircle, 
+import { useState, type ChangeEvent, type FormEvent } from "react";
+import Link from "next/link";
+import {
   AlertCircle,
- 
+  ArrowRight,
+  ArrowUpRight,
+  CheckCircle2,
+  Clock,
+  Mail,
+  MapPin,
   MessageCircle,
   Navigation,
-  Church,
-  Users,
-  Calendar
+  Phone,
 } from "lucide-react";
+import { PageIntro } from "../components/ui";
+import Reveal from "../components/Reveal";
+import { church } from "../data/church";
+
+const subjects = [
+  "General enquiry",
+  "Prayer request",
+  "Membership",
+  "Volunteering",
+  "Giving",
+  "Testimony",
+  "Complaint or suggestion",
+];
+
+const emptyForm = { name: "", email: "", phone: "", subject: "", message: "" };
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    subject: "",
-    message: "",
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
+  const [form, setForm] = useState(emptyForm);
+  const [status, setStatus] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const update = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const submit = (e: FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitStatus(null);
-
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      const subject = `Contact Form: ${formData.subject}`;
-      const body = `
-Name: ${formData.name}
-Email: ${formData.email}
-Phone: ${formData.phone}
-Subject: ${formData.subject}
-
-Message:
-${formData.message}
-      `;
-      
-      window.location.href = `mailto:info@rccgpraiseparish.org?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-      
-      setSubmitStatus({ type: "success", message: "Thank you! Your email client will open to send your message." });
-      setFormData({ name: "", email: "", phone: "", subject: "", message: "" });
-    } catch (error) {
-      setSubmitStatus({ type: "error", message: "Something went wrong. Please try again." });
-    } finally {
-      setIsSubmitting(false);
+      // Opens the visitor's email app. Connect a form backend to send directly.
+      const to = form.subject === "Prayer request" ? church.emails.prayer : church.emails.general;
+      const body = `Name: ${form.name}\nEmail: ${form.email}\nPhone: ${form.phone}\n\n${form.message}`;
+      window.location.href = `mailto:${to}?subject=${encodeURIComponent(form.subject)}&body=${encodeURIComponent(body)}`;
+      setStatus({ type: "success", message: "Your email app should open with your message. Press send to finish." });
+      setForm(emptyForm);
+    } catch {
+      setStatus({ type: "error", message: "Something went wrong. Please try again, or call us." });
     }
   };
 
-  const contactInfo = [
+  const startPrayerRequest = () => {
+    setForm((f) => ({ ...f, subject: "Prayer request" }));
+    document.getElementById("message-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const cards = [
     {
       icon: MapPin,
-      title: "Visit Us",
-      details: ["RCCG The Praise Parish", "Ora Estate, Epe", "Lagos State, Nigeria"],
-      color: "from-red-500 to-pink-500",
-      action: "https://maps.google.com/?q=Ora+Estate+Epe+Lagos+Nigeria",
-      actionText: "Get Directions"
+      title: "Visit",
+      lines: [church.name, ...church.address],
+      href: church.mapsUrl,
+      action: "Get directions",
+      external: true,
     },
     {
       icon: Phone,
-      title: "Call Us",
-      details: ["+234 801 234 5678", "+234 802 345 6789", "+234 803 456 7890"],
-      color: "from-green-500 to-emerald-500",
-      action: "tel:+2348012345678",
-      actionText: "Call Now"
+      title: "Call",
+      lines: church.phones,
+      href: `tel:${church.phones[0].replace(/\s/g, "")}`,
+      action: "Call the office",
     },
     {
       icon: Mail,
-      title: "Email Us",
-      details: ["info@rccgpraiseparish.org", "prayer@rccgpraiseparish.org", "giving@rccgpraiseparish.org"],
-      color: "from-blue-500 to-cyan-500",
-      action: "mailto:info@rccgpraiseparish.org",
-      actionText: "Send Email"
+      title: "Email",
+      lines: Object.values(church.emails),
+      href: `mailto:${church.emails.general}`,
+      action: "Send an email",
     },
     {
       icon: Clock,
-      title: "Office Hours",
-      details: ["Monday - Friday: 9:00 AM - 5:00 PM", "Saturday: 10:00 AM - 2:00 PM", "Sunday: 8:00 AM - 1:00 PM"],
-      color: "from-purple-500 to-indigo-500",
-      action: "#",
-      actionText: "View Services"
+      title: "Office hours",
+      lines: church.officeHours.map((h) => `${h.days}: ${h.hours}`),
+      href: "/services",
+      action: "Service times",
     },
   ];
 
-  const socialLinks = [
- { icon: MessageCircle, name: "WhatsApp", link: "https://wa.me/2348012345678", color: "bg-[#25D366]" },
-  ];
-
-  const quickLinks = [
-    { icon: Church, name: "Sunday Services", link: "/services", description: "Join us for worship" },
-    { icon: Users, name: "Become a Member", link: "/join", description: "Join our family" },
-    { icon: Calendar, name: "Upcoming Events", link: "/events", description: "Stay connected" },
-  ];
-
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 pt-24 sm:pt-28 pb-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Page Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-8 sm:mb-12"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full mb-4">
-            <Mail className="w-4 h-4 text-blue-600" />
-            <span className="text-sm font-semibold text-blue-600">Get In Touch</span>
-          </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            Contact
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
-              {" "}Us
-            </span>
-          </h1>
-          <div className="w-20 h-1 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto" />
-          <p className="text-gray-600 mt-4 text-sm sm:text-base max-w-2xl mx-auto">
-            Have questions? We'd love to hear from you. Reach out to us through any of the channels below.
-          </p>
-        </motion.div>
+    <>
+      <PageIntro kicker="Contact" title="Get in touch">
+        Questions, prayer requests or planning your first visit. Call, write or come by the office
+        and someone will help.
+      </PageIntro>
 
-        {/* Contact Info Cards */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12">
-          {contactInfo.map((info, index) => {
-            const Icon = info.icon;
-            return (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-white rounded-2xl p-5 shadow-lg hover:shadow-xl transition-all group"
+      <section className="wrap">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {cards.map((c, i) => (
+            <Reveal key={c.title} delay={i * 80}>
+              <a
+                href={c.href}
+                target={c.external ? "_blank" : undefined}
+                rel={c.external ? "noopener noreferrer" : undefined}
+                className="card card-hover group flex h-full flex-col p-6"
               >
-                <div className={`w-12 h-12 bg-gradient-to-r ${info.color} rounded-full flex items-center justify-center mb-3`}>
-                  <Icon className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{info.title}</h3>
-                <div className="space-y-1 mb-3">
-                  {info.details.map((detail, idx) => (
-                    <p key={idx} className="text-gray-600 text-sm">{detail}</p>
-                  ))}
-                </div>
-                <a 
-                  href={info.action}
-                  target={info.title === "Visit Us" ? "_blank" : undefined}
-                  rel={info.title === "Visit Us" ? "noopener noreferrer" : undefined}
-                  className="text-blue-600 text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all"
-                >
-                  {info.actionText} <ChevronRight className="w-3 h-3" />
-                </a>
-              </motion.div>
-            );
-          })}
-        </div>
-
-        {/* Map Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="mb-12"
-        >
-          <div className="bg-white rounded-2xl overflow-hidden shadow-lg">
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-white" />
-                <h2 className="text-xl font-bold text-white">Find Us Here</h2>
-              </div>
-            </div>
-            <div className="h-96 w-full">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3964.123456789012!2d3.983333!3d6.583333!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwMzUnMDAuMCJOIDTCsDU5JzAwLjAiRQ!5e0!3m2!1sen!2sng!4v1234567890123!5m2!1sen!2sng"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                title="Church Location"
-              />
-            </div>
-            <div className="p-4 bg-gray-50 text-center">
-              <a 
-                href="https://maps.google.com/?q=Ora+Estate+Epe+Lagos+Nigeria"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 transition"
-              >
-                <Navigation className="w-4 h-4" />
-                <span>Get Directions on Google Maps</span>
-              </a>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Contact Form & Quick Links */}
-        <div className="grid lg:grid-cols-3 gap-8">
-          
-          {/* Contact Form */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="lg:col-span-2"
-          >
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-4">
-                <h2 className="text-xl font-bold text-white">Send Us a Message</h2>
-                <p className="text-blue-100 text-sm">We'll get back to you as soon as possible</p>
-              </div>
-              
-              <form onSubmit={handleSubmit} className="p-6 space-y-5">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Your Name *</label>
-                    <input
-                      type="text"
-                      name="name"
-                      required
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Enter your name"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Email Address *</label>
-                    <input
-                      type="email"
-                      name="email"
-                      required
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Enter your email"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Phone Number</label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Enter your phone"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Subject *</label>
-                    <select
-                      name="subject"
-                      required
-                      value={formData.subject}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      <option value="">Select a subject</option>
-                      <option value="General Inquiry">General Inquiry</option>
-                      <option value="Prayer Request">Prayer Request</option>
-                      <option value="Membership">Membership</option>
-                      <option value="Volunteering">Volunteering</option>
-                      <option value="Donation/Giving">Donation/Giving</option>
-                      <option value="Testimony">Testimony</option>
-                      <option value="Complaint/Suggestion">Complaint/Suggestion</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1">Message *</label>
-                  <textarea
-                    name="message"
-                    rows={5}
-                    required
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="Write your message here..."
+                <span className="flex items-center justify-between">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-plum-soft text-plum transition-colors duration-300 group-hover:bg-plum group-hover:text-white">
+                    <c.icon size={19} strokeWidth={1.75} aria-hidden="true" />
+                  </span>
+                  <ArrowUpRight
+                    size={18}
+                    strokeWidth={1.75}
+                    className="text-ink-3 transition-[transform,color] duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-plum"
+                    aria-hidden="true"
                   />
-                </div>
+                </span>
+                <h2 className="display mt-6 text-[22px] text-ink">{c.title}</h2>
+                <ul className="mt-2 flex-1 space-y-1 text-[15px] leading-6 text-ink-2">
+                  {c.lines.map((l) => (
+                    <li key={l} className="break-words tabular-nums">
+                      {l}
+                    </li>
+                  ))}
+                </ul>
+                <span className="mt-5 text-sm font-medium text-plum">{c.action}</span>
+              </a>
+            </Reveal>
+          ))}
+        </div>
+      </section>
 
-                {submitStatus && (
-                  <div className={`p-3 rounded-lg flex items-center gap-2 ${
-                    submitStatus.type === "success" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
-                  }`}>
-                    {submitStatus.type === "success" ? <CheckCircle className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
-                    <span className="text-sm">{submitStatus.message}</span>
-                  </div>
-                )}
+      <section className="wrap py-6">
+        <Reveal className="overflow-hidden rounded-[32px] border border-line bg-raised">
+          <div className="h-[380px] w-full sm:h-[440px]">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3964.123456789012!2d3.983333!3d6.583333!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwMzUnMDAuMCJOIDTCsDU5JzAwLjAiRQ!5e0!3m2!1sen!2sng!4v1234567890123!5m2!1sen!2sng"
+              width="100%"
+              height="100%"
+              style={{ border: 0 }}
+              allowFullScreen
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Map showing RCCG The Praise Parish, Ora Estate, Epe"
+            />
+          </div>
+          <div className="flex flex-col gap-3 bg-card p-5 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-[15px] text-ink-2">{church.address.join(", ")}</p>
+            <a href={church.mapsUrl} target="_blank" rel="noopener noreferrer" className="btn btn-sm btn-primary">
+              <Navigation size={15} strokeWidth={2} aria-hidden="true" />
+              Open in Google Maps
+            </a>
+          </div>
+        </Reveal>
+      </section>
 
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                  {isSubmitting ? "Sending..." : "Send Message"}
-                  <Send className="w-4 h-4" />
-                </button>
-              </form>
-            </div>
-          </motion.div>
+      <section className="wrap grid gap-6 py-16 sm:pb-32 lg:grid-cols-[2fr_1fr]">
+        <Reveal className="card scroll-mt-24 p-6 sm:p-10" >
+          <div id="message-form" className="scroll-mt-28" />
+          <h2 className="display text-[32px] text-ink">Send a message</h2>
+          <p className="mt-2 text-[15px] text-ink-2">We reply as soon as we can.</p>
 
-          {/* Quick Links & Social */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="space-y-6"
-          >
-            {/* Quick Links */}
-            <div className="bg-white rounded-2xl p-6 shadow-lg">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Links</h3>
-              <div className="space-y-3">
-                {quickLinks.map((link, idx) => {
-                  const Icon = link.icon;
-                  return (
-                    <a
-                      key={idx}
-                      href={link.link}
-                      className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition group"
-                    >
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center group-hover:bg-blue-200 transition">
-                        <Icon className="w-5 h-5 text-blue-600" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-semibold text-gray-900">{link.name}</p>
-                        <p className="text-xs text-gray-500">{link.description}</p>
-                      </div>
-                      <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition" />
-                    </a>
-                  );
-                })}
+          <form onSubmit={submit} className="mt-8 grid gap-5 md:grid-cols-2">
+            <label className="block">
+              <span className="field-label">Your name <span className="text-plum">*</span></span>
+              <input className="field" name="name" required value={form.name} onChange={update} autoComplete="name" />
+            </label>
+            <label className="block">
+              <span className="field-label">Email <span className="text-plum">*</span></span>
+              <input className="field" type="email" name="email" required value={form.email} onChange={update} autoComplete="email" />
+            </label>
+            <label className="block">
+              <span className="field-label">Phone</span>
+              <input className="field" type="tel" name="phone" value={form.phone} onChange={update} autoComplete="tel" />
+            </label>
+            <label className="block">
+              <span className="field-label">Subject <span className="text-plum">*</span></span>
+              <select className="field" name="subject" required value={form.subject} onChange={update}>
+                <option value="">Choose a subject</option>
+                {subjects.map((s) => (
+                  <option key={s}>{s}</option>
+                ))}
+              </select>
+            </label>
+            <label className="block md:col-span-2">
+              <span className="field-label">Message <span className="text-plum">*</span></span>
+              <textarea className="field" name="message" rows={6} required value={form.message} onChange={update} />
+            </label>
+
+            {status && (
+              <div
+                role="status"
+                className={`flex items-start gap-2.5 rounded-xl px-4 py-3 text-[15px] md:col-span-2 ${
+                  status.type === "success" ? "bg-[#e7f4ec] text-[#16794a]" : "bg-[#fdecea] text-[#b42318]"
+                }`}
+              >
+                {status.type === "success" ? <CheckCircle2 size={18} strokeWidth={1.75} className="mt-0.5 shrink-0" /> : <AlertCircle size={18} strokeWidth={1.75} className="mt-0.5 shrink-0" />}
+                {status.message}
               </div>
-            </div>
+            )}
 
-            {/* Social Media */}
-            <div className="bg-white rounded-2xl p-6 shadow-lg">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Connect With Us</h3>
-              <div className="grid grid-cols-2 gap-3">
-                {socialLinks.map((social, idx) => {
-                  const Icon = social.icon;
-                  return (
-                    <a
-                      key={idx}
-                      href={social.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`${social.color} text-white rounded-xl p-3 flex items-center gap-2 hover:opacity-90 transition transform hover:scale-105`}
-                    >
-                      <Icon className="w-4 h-4" />
-                      <span className="text-sm font-medium">{social.name}</span>
-                    </a>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Prayer Request Button */}
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-6 text-center text-white">
-              <h3 className="text-lg font-bold mb-2">Need Prayer?</h3>
-              <p className="text-sm text-blue-100 mb-4">Our prayer team is ready to stand with you</p>
-              <button className="bg-white text-purple-600 px-5 py-2 rounded-full font-semibold hover:shadow-lg transition transform hover:scale-105">
-                Submit Prayer Request
+            <div className="md:col-span-2">
+              <button type="submit" className="btn btn-accent w-full sm:w-auto">
+                Send message <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
               </button>
             </div>
-          </motion.div>
+          </form>
+        </Reveal>
+
+        <div className="space-y-5">
+          <Reveal delay={100} className="rounded-3xl bg-navy p-8 text-white">
+            <h2 className="display text-[28px]">Need prayer?</h2>
+            <p className="mt-2 text-[15px] leading-6 text-white/70">
+              Send a prayer request and the prayer team will stand with you.
+            </p>
+            <button type="button" onClick={startPrayerRequest} className="btn btn-light mt-6">
+              Send a prayer request <ArrowRight size={16} strokeWidth={2} aria-hidden="true" />
+            </button>
+          </Reveal>
+
+          <Reveal delay={160}>
+            <a
+              href={`https://wa.me/${church.whatsapp}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="card card-hover group flex items-center gap-4 p-6"
+            >
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e7f4ec] text-[#16794a]">
+                <MessageCircle size={20} strokeWidth={1.75} aria-hidden="true" />
+              </span>
+              <span className="flex-1">
+                <span className="block text-[17px] font-medium text-ink">Chat on WhatsApp</span>
+                <span className="block text-sm tabular-nums text-ink-3">{church.phones[0]}</span>
+              </span>
+              <ArrowUpRight size={18} strokeWidth={1.75} className="text-ink-3 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
+            </a>
+          </Reveal>
+
+          <Reveal delay={220} className="card p-3">
+            {[
+              { name: "Service times", href: "/services" },
+              { name: "Become a member", href: "/join" },
+              { name: "Upcoming events", href: "/events" },
+            ].map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="group flex items-center justify-between rounded-2xl px-4 py-3.5 text-[15px] text-ink transition-colors hover:bg-raised"
+              >
+                {l.name}
+                <ArrowRight size={16} strokeWidth={1.75} className="text-ink-3 transition-transform duration-200 group-hover:translate-x-1 group-hover:text-plum" aria-hidden="true" />
+              </Link>
+            ))}
+          </Reveal>
         </div>
-      </div>
-    </main>
+      </section>
+    </>
   );
 }
-
-// Add missing ChevronRight component
-const ChevronRight = ({ className }: { className?: string }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-  </svg>
-);

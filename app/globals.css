@@ -1,26 +1,252 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+  RCCG The Praise Parish
+  Warm paper, deep navy, plum from the parish logo. The photographs carry the colour.
+*/
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-paper: #f6f2ea;
+  --color-card: #fffdf8;
+  --color-raised: #ece5d9;
+  --color-line: rgb(18 38 58 / 0.1);
+  --color-line-strong: rgb(18 38 58 / 0.2);
+
+  --color-ink: #13212e;
+  --color-ink-2: #4d4a44;
+  --color-ink-3: #736b60;
+
+  --color-navy: #12263a;
+  --color-navy-deep: #0b1a29;
+  --color-plum: #5b2f8a;
+  --color-plum-deep: #45216b;
+  --color-plum-soft: #ece3f5;
+  --color-sun: #f2b544;
+
+  --font-sans: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-inter), var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
+
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: var(--color-plum);
+  color: white;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-plum);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+@layer components {
+  .wrap {
+    @apply mx-auto w-full max-w-[1280px] px-5 sm:px-8;
+  }
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-sm font-medium text-plum;
+  }
+  .eyebrow::before {
+    content: "";
+    @apply h-px w-6 bg-current;
+  }
+
+  /* Buttons */
+  .btn {
+    @apply relative inline-flex h-12 items-center justify-center gap-2 overflow-hidden rounded-full px-6 text-[15px] font-medium transition-[background-color,border-color,color,transform,box-shadow] duration-200 active:scale-[0.97];
+    transition-timing-function: var(--ease-soft);
+  }
+  .btn svg {
+    @apply transition-transform duration-200;
+  }
+  .btn:hover svg {
+    @apply translate-x-0.5;
+  }
+  .btn-sm {
+    @apply h-10 px-5 text-sm;
+  }
+  .btn-primary {
+    @apply bg-navy text-white hover:-translate-y-0.5 hover:bg-navy-deep hover:shadow-[0_10px_24px_-10px_rgba(18,38,58,0.6)];
+  }
+  .btn-accent {
+    @apply bg-plum text-white hover:-translate-y-0.5 hover:bg-plum-deep hover:shadow-[0_10px_24px_-10px_rgba(91,47,138,0.65)];
+  }
+  .btn-secondary {
+    @apply border border-line-strong bg-transparent text-ink hover:-translate-y-0.5 hover:border-ink hover:bg-ink hover:text-white;
+  }
+  .btn-light {
+    @apply bg-white text-ink hover:-translate-y-0.5 hover:bg-sun;
+  }
+  .btn-ghost-light {
+    @apply border border-white/40 text-white hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-ink;
+  }
+
+  .text-link {
+    @apply relative inline-flex items-center gap-1.5 text-[15px] font-medium text-plum;
+  }
+  .text-link::after {
+    content: "";
+    @apply absolute -bottom-0.5 left-0 h-px w-full origin-left scale-x-0 bg-current transition-transform duration-300;
+    transition-timing-function: var(--ease-soft);
+  }
+  .text-link:hover::after {
+    @apply scale-x-100;
+  }
+  .text-link svg {
+    @apply transition-transform duration-200;
+  }
+  .text-link:hover svg {
+    @apply translate-x-1;
+  }
+
+  /* Form fields */
+  .field {
+    @apply h-12 w-full rounded-xl border border-line-strong bg-card px-4 text-[15px] text-ink placeholder:text-ink-3 transition-[border-color,box-shadow] duration-200 hover:border-ink/40 focus:border-plum focus:outline-none focus:ring-4 focus:ring-plum/10;
+  }
+  textarea.field {
+    @apply h-auto py-3;
+  }
+  .field-label {
+    @apply mb-2 block text-sm font-medium text-ink;
+  }
+
+  /* Cards */
+  .card {
+    @apply rounded-3xl border border-line bg-card;
+  }
+  .card-hover {
+    @apply transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-line-strong hover:shadow-[0_24px_48px_-24px_rgba(18,38,58,0.28)];
+    transition-timing-function: var(--ease-soft);
+  }
+  .zoom {
+    @apply overflow-hidden;
+  }
+  .zoom img {
+    @apply transition-transform duration-700;
+    transition-timing-function: var(--ease-soft);
+  }
+  .group:hover .zoom img,
+  .zoom:hover img {
+    @apply scale-[1.06];
+  }
+
+  /* Signature: the dotted leader of a printed order of service */
+  .leader {
+    @apply mx-3 flex-1 translate-y-[-4px] border-b border-dotted border-current opacity-30;
+  }
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 800ms var(--ease-soft),
+    transform 800ms var(--ease-soft);
+}
+.reveal.is-shown {
+  opacity: 1;
+  transform: none;
+}
+
+/* Load entrance */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rise {
+  animation: rise 900ms var(--ease-soft) both;
+}
+.rise-2 {
+  animation: rise 900ms var(--ease-soft) 120ms both;
+}
+.rise-3 {
+  animation: rise 900ms var(--ease-soft) 240ms both;
+}
+.rise-4 {
+  animation: rise 900ms var(--ease-soft) 360ms both;
+}
+
+/* Hero photo drift */
+@keyframes drift {
+  from {
+    transform: scale(1.12);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+.drift {
+  animation: drift 9s var(--ease-soft) both;
+}
+
+/* Slide progress */
+@keyframes progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.progress {
+  transform-origin: left;
+  animation: progress linear both;
+}
+
+/* Service times strip */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee {
+  animation: marquee 40s linear infinite;
+}
+.marquee:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .rise,
+  .rise-2,
+  .rise-3,
+  .rise-4,
+  .drift,
+  .marquee,
+  .progress {
+    animation: none;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }

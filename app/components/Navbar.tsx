@@ -1,180 +1,193 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { ArrowUpRight, ChevronDown, Menu, X } from "lucide-react";
 
-const navItems = [
-  { name: "Home", href: "/" },
-  { name: "About", href: "/about" },
-  { name: "Services", href: "/services" },
-  {name:"Events", href:"/events"},
-  {name:"Gallery", href:"/gallery"},
-  { name: "Join", href: "/join" },
-  { name: "Contact", href: "/contact" }
+const aboutItems = [
+  { name: "About us", href: "/about", note: "Who we are" },
+  { name: "Our story", href: "/about/story", note: "Since 1952, and here since 1999" },
+  { name: "Leadership", href: "/about/leadership", note: "Our pastors" },
+  { name: "Ministries", href: "/about/ministries", note: "Ways to serve" },
 ];
 
-// Custom SVG Icons
-const YoutubeIcon = ({ className }: { className?: string }) => (
-  <svg className={className} fill="currentColor" viewBox="0 0 24 24">
-    <path d="M22.54 6.42a2.78 2.78 0 00-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 00-1.94 2A29 29 0 001 11.75a29 29 0 00.46 5.33A2.78 2.78 0 003.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 001.94-2 29 29 0 00.46-5.25 29 29 0 00-.46-5.33z"/>
-    <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/>
-  </svg>
-);
+const navItems = [
+  { name: "Services", href: "/services" },
+  { name: "Events", href: "/events" },
+  { name: "Gallery", href: "/gallery" },
+  { name: "Join", href: "/join" },
+  { name: "Contact", href: "/contact" },
+];
 
-const GiftIcon = ({ className }: { className?: string }) => (
-  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-  </svg>
-);
+function isActive(pathname: string, href: string) {
+  return href === "/" ? pathname === "/" : pathname.startsWith(href);
+}
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    setMobileOpen(false);
+    setAboutOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const openYouTubeLive = () => {
-    window.open("https://youtube.com/live/your-channel", "_blank");
-  };
+  // Pages with a full photo header: the bar sits over the photo until you scroll.
+  const photoPages = ["/", "/services", "/about", "/about/story", "/about/leadership", "/about/ministries"];
+  const overPhoto = photoPages.includes(pathname) && !scrolled && !mobileOpen;
 
-  const openGivePage = () => {
-    window.open("/give", "_blank");
+  const linkClass = (href: string) => {
+    const active = isActive(pathname, href);
+    const base =
+      "relative py-1 text-[15px] transition-colors duration-200 after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-full after:origin-left after:bg-current after:transition-transform after:duration-300";
+    const state = active ? "after:scale-x-100" : "after:scale-x-0 hover:after:scale-x-100";
+    const color = overPhoto
+      ? active
+        ? "text-white"
+        : "text-white/80 hover:text-white"
+      : active
+        ? "text-ink"
+        : "text-ink-2 hover:text-ink";
+    return `${base} ${state} ${color}`;
   };
 
   return (
-    <>
-      <div className="fixed top-0 left-0 right-0 z-50 flex justify-center px-4 pt-4">
-        <motion.nav
-          initial={{ y: -100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
-          className={`rounded-2xl transition-all duration-300 ${
-            isScrolled
-              ? "bg-white/95 backdrop-blur-md shadow-lg"
-              : "bg-gradient-to-r from-blue-900/95 to-purple-900/95 backdrop-blur-sm"
-          } w-full max-w-7xl`}
-        >
-          <div className="px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16 sm:h-20">
-              {/* Logo with Link */}
-              <a href="/" className="flex items-center space-x-2 sm:space-x-3">
-                <div className="w-20 h-8  gap-2 sm:w-20 sm:h-10 rounded-full flex items-center justify-center shadow-md">
-                  <span className="text-lg sm:text-xl text-purple-900/90">
-                  <img src="/rl.jpeg" alt="RCCG Logo" className="w-5 h-5 rounded-full sm:w-6 sm:h-6" />
-                  </span>
-                  <span className="text-lg sm:text-xl text-purple-900/90">
-                  <img src="/tpplogo.jpg" alt="RCCG Logo" className="w-5 h-5 rounded-full sm:w-6 sm:h-6" />
-                  </span>
-                </div>
-                <div>
-                  <h1 className={`font-bold text-sm sm:text-base md:text-lg ${isScrolled ? "text-gray-900" : "text-white"}`}>
-                    RCCG
-                  </h1>
-                  <p className={`text-xs ${isScrolled ? "text-gray-500" : "text-blue-300"}  sm:block`}>
-                    The Praise Parish LP 132
-                  </p>
-                </div>
-              </a>
+    <header
+      className={`sticky top-0 z-50 transition-[background-color,border-color,box-shadow] duration-300 ${
+        overPhoto
+          ? "border-b border-transparent bg-transparent"
+          : "border-b border-line bg-paper/90 shadow-[0_8px_24px_-20px_rgba(18,38,58,0.35)] backdrop-blur-md"
+      }`}
+    >
+      <nav aria-label="Main navigation" className="wrap flex h-[72px] items-center justify-between">
+        <Link href="/" className="group flex items-center gap-3">
+          <img
+            src="/tpplogo.jpg"
+            alt=""
+            className="h-10 w-10 rounded-full bg-white object-contain p-0.5 transition-transform duration-300 group-hover:rotate-[-8deg]"
+          />
+          <span className="leading-tight">
+            <span className={`display block text-[18px] transition-colors ${overPhoto ? "text-white" : "text-ink"}`}>
+              The Praise Parish
+            </span>
+            <span className={`block text-[12px] transition-colors ${overPhoto ? "text-white/70" : "text-ink-3"}`}>
+              RCCG · Epe, Lagos
+            </span>
+          </span>
+        </Link>
 
-              {/* Desktop Menu with Links */}
-              <div className="hidden md:flex items-center space-x-6 lg:space-x-8 xl:space-x-10">
-                {navItems.map((item) => (
-                  <a
-                    key={item.name}
+        <div className="hidden items-center gap-8 lg:flex">
+          <div className="group relative">
+            <Link href="/about" className={`inline-flex items-center gap-1 ${linkClass("/about")}`}>
+              About
+              <ChevronDown
+                size={15}
+                strokeWidth={1.75}
+                className="transition-transform duration-300 group-hover:rotate-180"
+                aria-hidden="true"
+              />
+            </Link>
+            <div className="invisible absolute -left-4 top-full pt-4 opacity-0 transition-[opacity,transform,visibility] duration-300 group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
+              <div className="w-72 translate-y-2 rounded-2xl border border-line bg-card p-2 shadow-[0_24px_48px_-20px_rgba(18,38,58,0.3)] transition-transform duration-300 group-hover:translate-y-0">
+                {aboutItems.map((item) => (
+                  <Link
+                    key={item.href}
                     href={item.href}
-                    className={`${isScrolled ? "text-gray-700" : "text-white"} hover:text-blue-400 transition-colors font-medium text-sm lg:text-base`}
+                    className="group/item flex items-center justify-between rounded-xl px-4 py-3 transition-colors duration-200 hover:bg-raised"
                   >
-                    {item.name}
-                  </a>
+                    <span>
+                      <span className="block text-[15px] font-medium text-ink">{item.name}</span>
+                      <span className="block text-[13px] text-ink-3">{item.note}</span>
+                    </span>
+                    <ArrowUpRight
+                      size={16}
+                      strokeWidth={1.75}
+                      className="text-ink-3 opacity-0 transition-[opacity,transform] duration-200 group-hover/item:translate-x-0.5 group-hover/item:opacity-100"
+                      aria-hidden="true"
+                    />
+                  </Link>
                 ))}
               </div>
-
-              {/* Action Buttons */}
-              <div className="hidden md:flex items-center space-x-3">
-                {/* YouTube Live Button */}
-                <button
-                  onClick={openYouTubeLive}
-                  className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-full transition-all transform hover:scale-105 shadow-md"
-                >
-                  <YoutubeIcon className="w-4 h-4" />
-                  <span className="text-sm font-semibold">Live</span>
-                </button>
-
-                {/* Give Button */}
-                <button
-                  onClick={openGivePage}
-                  className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-5 py-2 rounded-full transition-all transform hover:scale-105 shadow-md"
-                >
-                  <GiftIcon className="w-4 h-4" />
-                  <span className="text-sm font-semibold">Give</span>
-                </button>
-              </div>
-
-              {/* Mobile Menu Button */}
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="md:hidden p-2"
-              >
-                {isMobileMenuOpen ? (
-                  <X size={24} className={isScrolled ? "text-gray-900" : "text-white"} />
-                ) : (
-                  <Menu size={24} className={isScrolled ? "text-gray-900" : "text-white"} />
-                )}
-              </button>
             </div>
           </div>
-        </motion.nav>
-      </div>
+          {navItems.map((item) => (
+            <Link key={item.href} href={item.href} className={linkClass(item.href)}>
+              {item.name}
+            </Link>
+          ))}
+          <Link href="/give" className={`btn btn-sm ${overPhoto ? "btn-light" : "btn-accent"}`}>
+            Give online
+          </Link>
+        </div>
 
-      {/* Mobile Menu with Links */}
-      {isMobileMenuOpen && (
-        <motion.div
-          initial={{ x: "100%" }}
-          animate={{ x: 0 }}
-          exit={{ x: "100%" }}
-          transition={{ type: "tween", duration: 0.3 }}
-          className="fixed inset-0 z-40 bg-gradient-to-br from-blue-900 to-purple-900 pt-20 sm:pt-24"
+        <button
+          type="button"
+          aria-label={mobileOpen ? "Close menu" : "Open menu"}
+          aria-expanded={mobileOpen}
+          onClick={() => setMobileOpen((open) => !open)}
+          className={`-mr-2 flex h-11 w-11 items-center justify-center rounded-full transition-colors lg:hidden ${
+            overPhoto ? "text-white hover:bg-white/15" : "text-ink hover:bg-raised"
+          }`}
         >
-          <div className="flex flex-col items-center space-y-6 px-4">
-            {navItems.map((item) => (
-              <a
-                key={item.name}
+          {mobileOpen ? <X size={22} strokeWidth={1.75} /> : <Menu size={22} strokeWidth={1.75} />}
+        </button>
+      </nav>
+
+      {mobileOpen && (
+        <div className="max-h-[calc(100dvh-72px)] overflow-y-auto border-t border-line bg-paper lg:hidden">
+          <div className="wrap flex flex-col py-4">
+            <Link href="/" className="display rise py-3 text-[26px] text-ink">
+              Home
+            </Link>
+            <button
+              type="button"
+              aria-expanded={aboutOpen}
+              onClick={() => setAboutOpen((open) => !open)}
+              className="display rise flex items-center justify-between py-3 text-left text-[26px] text-ink"
+            >
+              About
+              <ChevronDown
+                size={22}
+                strokeWidth={1.75}
+                className={`text-ink-3 transition-transform duration-300 ${aboutOpen ? "rotate-180" : ""}`}
+                aria-hidden="true"
+              />
+            </button>
+            {aboutOpen && (
+              <div className="mb-2 ml-1 border-l-2 border-plum pl-4">
+                {aboutItems.map((item) => (
+                  <Link key={item.href} href={item.href} className="block py-2 text-[17px] text-ink-2">
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+            )}
+            {navItems.map((item, i) => (
+              <Link
+                key={item.href}
                 href={item.href}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="text-white text-xl sm:text-2xl hover:text-blue-200 transition-colors py-2"
+                style={{ animationDelay: `${(i + 2) * 40}ms` }}
+                className="display rise py-3 text-[26px] text-ink"
               >
                 {item.name}
-              </a>
+              </Link>
             ))}
-            
-            {/* Mobile Action Buttons */}
-            <div className="flex flex-col gap-4 mt-8 w-full max-w-xs">
-              <button
-                onClick={openYouTubeLive}
-                className="flex items-center justify-center gap-3 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-full transition-all transform hover:scale-105 w-full"
-              >
-                <YoutubeIcon className="w-5 h-5" />
-                <span className="font-semibold">Watch Live</span>
-              </button>
-              
-              <button
-                onClick={openGivePage}
-                className="flex items-center justify-center gap-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-full transition-all transform hover:scale-105 w-full"
-              >
-                <GiftIcon className="w-5 h-5" />
-                <span className="font-semibold">Give / Donate</span>
-              </button>
-            </div>
+            <Link href="/give" className="btn btn-accent mb-4 mt-6">
+              Give online
+            </Link>
           </div>
-        </motion.div>
+        </div>
       )}
-    </>
+    </header>
   );
 }
